@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Book a Table | Cake Princess{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-cream">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass p-12 md:p-20 rounded-[3rem] shadow-2xl" data-aos="fade-up">
+            <div class="text-center mb-12">
+                <span class="text-gold-600 font-bold uppercase tracking-widest text-xs mb-2 block">Reservations</span>
+                <h1 class="font-serif text-5xl font-bold">Reserve Your <span class="text-gold-600 italic">Royalty</span></h1>
+                <p class="text-gray-500 mt-4">Book a table, a surprise event, or a birthday party.</p>
+            </div>
+
+            <form method="post" class="space-y-8">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {{ form.full_name|as_crispy_field }}
+                    {{ form.email|as_crispy_field }}
+                    {{ form.phone_number|as_crispy_field }}
+                    {{ form.reservation_type|as_crispy_field }}
+                    {{ form.date|as_crispy_field }}
+                    {{ form.time|as_crispy_field }}
+                    {{ form.guest_count|as_crispy_field }}
+                </div>
+                {{ form.special_requests|as_crispy_field }}
+                
+                <div class="pt-6">
+                    <button type="submit" class="w-full btn-premium text-white py-5 rounded-full font-bold text-lg shadow-xl">
+                        Confirm Reservation
+                    </button>
+                    <p class="text-center text-xs text-gray-400 mt-6">
+                        We will contact you via phone or email to confirm your booking.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

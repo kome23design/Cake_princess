@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login | Cake Princess{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-cream min-h-screen flex items-center">
+    <div class="max-w-md mx-auto w-full px-4">
+        <div class="glass p-10 rounded-[2.5rem] shadow-2xl" data-aos="fade-up">
+            <div class="text-center mb-10">
+                <h1 class="font-serif text-3xl font-bold">Welcome <span class="text-gold-600">Back</span></h1>
+                <p class="text-gray-500 text-sm mt-2">Log in to your royalty account.</p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="w-full btn-premium text-white py-4 rounded-full font-bold mt-6 shadow-lg">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-8 text-center text-sm">
+                <p class="text-gray-500">Don't have an account? <a href="{% url 'accounts:register' %}" class="text-gold-600 font-bold">Register here</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

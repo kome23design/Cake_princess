@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}FAQ | Cake Princess{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-cream min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20" data-aos="fade-up">
+            <h1 class="font-serif text-5xl font-bold mb-4">Frequently Asked <span class="text-gold-600">Questions</span></h1>
+            <p class="text-gray-500">Everything you need to know about our services in Yaounde.</p>
+        </div>
+
+        <div class="space-y-6" data-aos="fade-up">
+            <!-- FAQ Item 1 -->
+            <div class="glass p-8 rounded-3xl shadow-sm border border-white/40 cursor-pointer group" onclick="toggleFaq(1)">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-charcoal">How do I place an order for delivery?</h3>
+                    <span class="text-gold-600 font-bold transform group-hover:rotate-180 transition-transform" id="icon-1">+</span>
+                </div>
+                <div class="hidden mt-6 text-gray-500 text-sm leading-relaxed" id="faq-1">
+                    You can place an order directly through our website by adding items to your cart and proceeding to checkout. Alternatively, you can contact us via WhatsApp for a more personalized ordering experience.
+                </div>
+            </div>
+
+            <!-- FAQ Item 2 -->
+            <div class="glass p-8 rounded-3xl shadow-sm border border-white/40 cursor-pointer group" onclick="toggleFaq(2)">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-charcoal">Which areas in Yaounde do you deliver to?</h3>
+                    <span class="text-gold-600 font-bold transform group-hover:rotate-180 transition-transform" id="icon-2">+</span>
+                </div>
+                <div class="hidden mt-6 text-gray-500 text-sm leading-relaxed" id="faq-2">
+                    We deliver to all major neighborhoods in Yaounde, including Jouvance, Bastos, Odza, Mendong, and Ngousso. Delivery fees may vary slightly depending on your distance from our kitchen opposite Total Jouvance.
+                </div>
+            </div>
+
+            <!-- FAQ Item 3 -->
+            <div class="glass p-8 rounded-3xl shadow-sm border border-white/40 cursor-pointer group" onclick="toggleFaq(3)">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-charcoal">How far in advance should I book a surprise event?</h3>
+                    <span class="text-gold-600 font-bold transform group-hover:rotate-180 transition-transform" id="icon-3">+</span>
+                </div>
+                <div class="hidden mt-6 text-gray-500 text-sm leading-relaxed" id="faq-3">
+                    For engagement and birthday surprises, we recommend booking at least 3-5 days in advance to allow our decor team to prepare everything perfectly. For simple table reservations, 24 hours is usually sufficient.
+                </div>
+            </div>
+
+            <!-- FAQ Item 4 -->
+            <div class="glass p-8 rounded-3xl shadow-sm border border-white/40 cursor-pointer group" onclick="toggleFaq(4)">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-charcoal">Do you accept Mobile Money payments?</h3>
+                    <span class="text-gold-600 font-bold transform group-hover:rotate-180 transition-transform" id="icon-4">+</span>
+                </div>
+                <div class="hidden mt-6 text-gray-500 text-sm leading-relaxed" id="faq-4">
+                    Yes, we accept both Orange Money and MTN Mobile Money. You can select this option at checkout, and our delivery agent will verify the transaction upon arrival.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function toggleFaq(id) {
+        const content = document.getElementById(`faq-${id}`);
+        const icon = document.getElementById(`icon-${id}`);
+        content.classList.toggle('hidden');
+        icon.innerText = content.classList.contains('hidden') ? '+' : '-';
+    }
+</script>
+{% endblock %}

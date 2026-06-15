@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Order History | Cake Princess{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-cream min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="font-serif text-4xl font-bold mb-12">Order <span class="text-gold-600">History</span></h1>
+
+        {% if orders %}
+        <div class="space-y-6">
+            {% for order in orders %}
+            <div class="glass p-8 rounded-[2rem] shadow-sm border border-white/40">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <span class="text-[10px] uppercase tracking-widest font-bold text-gray-400">Order #{{ order.id }}</span>
+                        <h3 class="font-bold text-lg text-charcoal">{{ order.created_at|date:"F d, Y" }}</h3>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                        <span class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest
+                            {% if order.status == 'delivered' %}bg-green-100 text-green-700
+                            {% elif order.status == 'pending' %}bg-yellow-100 text-yellow-700
+                            {% elif order.status == 'cancelled' %}bg-red-100 text-red-700
+                            {% else %}bg-gold-100 text-gold-700{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                        <span class="font-bold text-xl text-charcoal">{{ order.total_price }} FCFA</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-100">
+                    <div class="space-y-4">
+                        <h4 class="text-xs uppercase tracking-widest font-bold text-gray-500">Items</h4>
+                        <div class="space-y-2">
+                            {% for item in order.items.all %}
+                            <div class="flex justify-between text-sm">
+                                <span>{{ item.quantity }} x {{ item.meal.name }}</span>
+                                <span class="text-gray-400">{{ item.get_cost }} FCFA</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h4 class="text-xs uppercase tracking-widest font-bold text-gray-500">Delivery Details</h4>
+                        <p class="text-sm font-bold text-gold-600">{{ order.location.name }} (+{{ order.delivery_charge }} FCFA)</p>
+                        <p class="text-sm text-gray-600">{{ order.address }}</p>
+                        <p class="text-sm font-bold">{{ order.phone_number }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-24 glass rounded-[3rem]">
+            <p class="text-gray-400 italic">You haven't placed any orders yet.</p>
+            <a href="{% url 'menu:menu_list' %}" class="btn-premium px-8 py-3 rounded-full text-white font-bold mt-6 inline-block">Order Now</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,11 @@
+django>=5.0,<6.0
+django-rest-framework
+django-environ
+django-crispy-forms
+crispy-tailwind
+pillow
+django-phonenumber-field[phonenumbers]
+django-cleanup
+python-dotenv
+psycopg2-binary
+whitenoise

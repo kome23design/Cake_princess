@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | Cake Princess{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div data-aos="fade-right">
+                <span class="text-gold-600 font-bold uppercase tracking-widest text-xs mb-4 block">Our Story</span>
+                <h1 class="font-serif text-5xl md:text-6xl font-bold mb-8 leading-tight">Crafting <span class="text-gold-600 italic">Sweet Legacies</span> in Yaounde.</h1>
+                <p class="text-gray-500 text-lg leading-relaxed mb-8">
+                    Founded in the heart of Yaounde, Cake Princess began with a simple mission: to bring world-class pastry art and gourmet dining to Cameroon. What started as a small boutique bakery has evolved into a premier destination for those who seek elegance in every bite.
+                </p>
+                <p class="text-gray-500 text-lg leading-relaxed mb-10">
+                    Our team of master pastry chefs and culinary experts work tirelessly to blend traditional African flavors with modern European techniques, ensuring that every cake, pastry, and meal is a masterpiece of taste and design.
+                </p>
+                
+                <div class="grid grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-3xl font-bold text-charcoal mb-2">10+</h4>
+                        <p class="text-sm text-gray-400 uppercase tracking-widest font-bold">Years of Passion</p>
+                    </div>
+                    <div>
+                        <h4 class="text-3xl font-bold text-charcoal mb-2">50k+</h4>
+                        <p class="text-sm text-gray-400 uppercase tracking-widest font-bold">Cakes Delivered</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative" data-aos="fade-left">
+                <div class="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl">
+                    <img src="{% static 'images/about_sec1.jpg' %}" alt="Our Craft" class="w-full h-full object-cover">
+                </div>
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-gold-600 rounded-full flex items-center justify-center border-8 border-white shadow-xl">
+                    <span class="text-white font-serif text-4xl italic font-bold">CP</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-24 bg-cream">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="font-serif text-4xl font-bold mb-16">Our Core <span class="text-gold-600">Values</span></h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="glass p-10 rounded-[2.5rem] shadow-sm" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-16 h-16 bg-gold-100 rounded-2xl flex items-center justify-center text-gold-600 mx-auto mb-6 text-2xl font-bold">01</div>
+                <h3 class="text-xl font-bold mb-4">Uncompromising Quality</h3>
+                <p class="text-gray-500 text-sm">We use only the finest ingredients, sourced locally and internationally, to ensure perfection.</p>
+            </div>
+            <div class="glass p-10 rounded-[2.5rem] shadow-sm" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-16 h-16 bg-gold-100 rounded-2xl flex items-center justify-center text-gold-600 mx-auto mb-6 text-2xl font-bold">02</div>
+                <h3 class="text-xl font-bold mb-4">Artisan Innovation</h3>
+                <p class="text-gray-500 text-sm">Our chefs are artists, constantly pushing the boundaries of flavor and presentation.</p>
+            </div>
+            <div class="glass p-10 rounded-[2.5rem] shadow-sm" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-16 h-16 bg-gold-100 rounded-2xl flex items-center justify-center text-gold-600 mx-auto mb-6 text-2xl font-bold">03</div>
+                <h3 class="text-xl font-bold mb-4">Customer Royalty</h3>
+                <p class="text-gray-500 text-sm">Every customer is a guest of honor. We treat your celebrations as if they were our own.</p>
+            </div>
+        </div>
+    </div>
+<section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div class="order-2 lg:order-1" data-aos="fade-right">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <div class="h-64 rounded-3xl overflow-hidden shadow-lg">
+                            <img src="{% static 'images/about_4.jpg' %}" alt="chops" class="w-full h-full object-cover">
+                        </div>
+                        <div class="h-48 rounded-3xl overflow-hidden shadow-lg">
+                            <img src="{% static 'images/about_1.jpg' %}" alt="Pastry" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <div class="pt-12 space-y-4">
+                        <div class="h-48 rounded-3xl overflow-hidden shadow-lg">
+                            <img src="{% static 'images/about_2.jpg' %}" alt="Sweets" class="w-full h-full object-cover">
+                        </div>
+                        <div class="h-64 rounded-3xl overflow-hidden shadow-lg">
+                            <img src="{% static 'images/cakes.jpg' %}" alt="Cakes" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="order-1 lg:order-2" data-aos="fade-left">
+                <span class="text-gold-600 font-bold uppercase tracking-widest text-xs mb-4 block">The Journey</span>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold mb-8">A Decade of <span class="text-gold-600">Culinary Art</span></h2>
+                <p class="text-gray-500 mb-6">From our humble beginnings as a small boutique bakery, we've always believed that food is an expression of love and art. Every recipe in our kitchen has a story, passed down through generations and refined by modern culinary techniques.</p>
+                <p class="text-gray-500 mb-8">Today, Cake Princess stands as a symbol of luxury and quality in Yaounde, serving thousands of happy guests who share our passion for the finer things in life.</p>
+                <div class="flex items-center space-x-6">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-charcoal">2019</div>
+                        <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">Founded</p>
+                    </div>
+                    <div class="h-10 w-px bg-gray-200"></div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-charcoal">2021</div>
+                        <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">First Store</p>
+                    </div>
+                    <div class="h-10 w-px bg-gray-200"></div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-charcoal">2024</div>
+                        <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">Digital Era</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Team -->
+<section class="py-24 bg-cream">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20" data-aos="fade-up">
+            <span class="text-gold-600 font-bold uppercase tracking-widest text-xs mb-4 block">Our Team</span>
+            <h2 class="font-serif text-4xl md:text-5xl font-bold">Meet the <span class="text-gold-600 italic">Artists</span></h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {% for member in team_members %}
+            <div class="text-center" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+                <div class="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6 shadow-xl border-4 border-white">
+                    {% if member.image %}
+                    <img src="{{ member.image.url }}" alt="{{ member.name }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full bg-gold-100 flex items-center justify-center text-4xl text-gold-600">👩‍🍳</div>
+                    {% endif %}
+                </div>
+                <h4 class="text-xl font-bold text-charcoal">{{ member.name }}</h4>
+                <p class="text-gold-600 font-medium text-sm mb-4">{{ member.role }}</p>
+                <p class="text-gray-500 text-sm">{{ member.bio }}</p>
+            </div>
+            {% empty %}
+            <!-- Static Placeholders if no members added yet -->
+            <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6 shadow-xl border-4 border-white">
+                    <img src="{% static 'images/chef_1.jpg' %}" alt="Head Chef" class="w-full h-full object-cover">
+                </div>
+                <h4 class="text-xl font-bold text-charcoal">Chef Bella</h4>
+                <p class="text-gold-600 font-medium text-sm mb-4">Executive Pastry Chef</p>
+                <p class="text-gray-500 text-sm">Bella brings 15 years of experience in French pastry arts, blending them with Cameroonian soul.</p>
+            </div>
+            
+            <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6 shadow-xl border-4 border-white">
+                    <img src="{% static 'images/chef_2.jpg' %}" alt="Sous Chef" class="w-full h-full object-cover">
+                </div>
+                <h4 class="text-xl font-bold text-charcoal">Chef Marc</h4>
+                <p class="text-gold-600 font-medium text-sm mb-4">Head of Culinary</p>
+                <p class="text-gray-500 text-sm">Marc specializes in gourmet meals and fusion flavors that delight our diners every day.</p>
+            </div>
+            
+            <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6 shadow-xl border-4 border-white">
+                    <img src="{% static 'images/chef_3.jpg' %}" alt="Cake Designer" class="w-full h-full object-cover">
+                </div>
+                <h4 class="text-xl font-bold text-charcoal">Elena Joy</h4>
+                <p class="text-gold-600 font-medium text-sm mb-4">Lead Cake Designer</p>
+                <p class="text-gray-500 text-sm">Elena's hands create the magic for your weddings and surprises, turning sugar into dreams.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

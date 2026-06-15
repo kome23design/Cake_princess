@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart | Cake Princess{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-cream min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="font-serif text-4xl font-bold mb-12">Your <span class="text-gold-600">Cart</span></h1>
+
+        {% if cart|length > 0 %}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Cart Items -->
+            <div class="lg:col-span-2 space-y-6">
+                {% for item in cart %}
+                <div class="glass p-6 rounded-3xl flex items-center space-x-6 shadow-sm">
+                    <div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 bg-white">
+                        {% if item.meal.image %}
+                        <img src="{{ item.meal.image.url }}" alt="{{ item.meal.name }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-3xl">🍽️</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg text-charcoal">{{ item.meal.name }}</h3>
+                                <p class="text-gray-400 text-sm">{{ item.meal.category.name }}</p>
+                            </div>
+                            <span class="font-bold text-gold-700">{{ item.price }} FCFA</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <div class="text-sm font-medium text-gray-500">
+                                Quantity: <span class="text-charcoal">{{ item.quantity }}</span>
+                            </div>
+                            <form action="{% url 'orders:cart_remove' item.meal.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="text-red-400 hover:text-red-600 transition-colors text-sm font-bold uppercase tracking-widest">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Summary -->
+            <div class="lg:col-span-1">
+                <div class="glass p-8 rounded-[2rem] shadow-lg sticky top-24 border border-white/40">
+                    <h3 class="font-bold text-xl mb-6">Order Summary</h3>
+                    <div class="space-y-4 mb-8">
+                        <div class="flex justify-between text-gray-500">
+                            <span>Subtotal</span>
+                            <span>{{ cart.get_total_price }} FCFA</span>
+                        </div>
+                        <div class="flex justify-between text-gray-500">
+                            <span>Packaging</span>
+                            <span>{{ cart.get_packaging_fee }} FCFA</span>
+                        </div>
+                        <div class="flex flex-col text-gray-500">
+                            <div class="flex justify-between">
+                                <span>Delivery</span>
+                                <span class="text-xs italic">To be discussed</span>
+                            </div>
+                            <p class="text-[10px] mt-1 leading-tight text-gray-400 italic">Delivery charges will be discussed with the admin upon confirmation.</p>
+                        </div>
+                        <div class="border-t border-gray-100 pt-4 flex justify-between font-bold text-xl">
+                            <span>Total</span>
+                            <span class="text-gold-700">{{ cart.get_grand_total }} FCFA</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'orders:checkout' %}" class="block w-full btn-premium text-white py-4 rounded-full font-bold text-center shadow-lg">
+                        Proceed to Checkout
+                    </a>
+                    <a href="{% url 'menu:menu_list' %}" class="block w-full text-center mt-4 text-sm font-medium text-gray-400 hover:text-charcoal transition-colors">
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-24 glass rounded-[3rem] shadow-sm">
+            <div class="text-6xl mb-6">🛒</div>
+            <h2 class="text-2xl font-bold mb-4">Your cart is empty</h2>
+            <p class="text-gray-400 mb-8">Looks like you haven't added any delicacies yet.</p>
+            <a href="{% url 'menu:menu_list' %}" class="btn-premium px-10 py-4 rounded-full text-white font-bold">
+                Browse Menu
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

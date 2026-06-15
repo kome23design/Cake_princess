@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile | Cake Princess{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-cream min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+            <!-- Sidebar -->
+            <div class="lg:col-span-1" data-aos="fade-right">
+                <div class="glass p-8 rounded-[2rem] shadow-xl text-center">
+                    <div class="w-24 h-24 rounded-full bg-gold-100 flex items-center justify-center text-gold-700 text-3xl font-bold mx-auto mb-6">
+                        {{ user.email|slice:":1"|upper }}
+                    </div>
+                    <h2 class="font-bold text-xl">{{ user.get_full_name|default:user.email }}</h2>
+                    <p class="text-gray-400 text-sm mb-8">{{ user.email }}</p>
+                    
+                    <nav class="space-y-2 text-left">
+                        <a href="{% url 'accounts:profile' %}" class="block px-4 py-3 rounded-xl bg-gold-600 text-white font-bold">Profile Details</a>
+                        <a href="{% url 'orders:order_history' %}" class="block px-4 py-3 rounded-xl hover:bg-gold-50 text-gray-600 transition-colors">Order History</a>
+                        <a href="{% url 'reservations:reservation_list' %}" class="block px-4 py-3 rounded-xl hover:bg-gold-50 text-gray-600 transition-colors">My Reservations</a>
+                        <hr class="my-4 border-gray-100">
+                        <a href="{% url 'accounts:logout' %}" class="block px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-colors">Logout</a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="lg:col-span-3" data-aos="fade-left">
+                <div class="glass p-12 rounded-[2.5rem] shadow-xl">
+                    <h3 class="font-serif text-3xl font-bold mb-8">Profile <span class="text-gold-600">Details</span></h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="space-y-1">
+                            <span class="text-[10px] uppercase tracking-widest font-bold text-gray-400">First Name</span>
+                            <p class="text-lg font-medium text-charcoal border-b border-gray-100 pb-2">{{ user.first_name|default:"Not set" }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[10px] uppercase tracking-widest font-bold text-gray-400">Last Name</span>
+                            <p class="text-lg font-medium text-charcoal border-b border-gray-100 pb-2">{{ user.last_name|default:"Not set" }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[10px] uppercase tracking-widest font-bold text-gray-400">Email Address</span>
+                            <p class="text-lg font-medium text-charcoal border-b border-gray-100 pb-2">{{ user.email }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[10px] uppercase tracking-widest font-bold text-gray-400">Phone Number</span>
+                            <p class="text-lg font-medium text-charcoal border-b border-gray-100 pb-2">{{ user.phone_number|default:"Not set" }}</p>
+                        </div>
+                        <div class="md:col-span-2 space-y-1">
+                            <span class="text-[10px] uppercase tracking-widest font-bold text-gray-400">Delivery Address</span>
+                            <p class="text-lg font-medium text-charcoal border-b border-gray-100 pb-2">{{ user.address|default:"No address saved" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12 flex space-x-4">
+                        <button class="btn-premium px-8 py-3 rounded-full text-white font-bold text-sm">Edit Profile</button>
+                        <button class="px-8 py-3 rounded-full border border-gray-200 text-gray-500 font-bold text-sm hover:bg-gray-50 transition-colors">Change Password</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

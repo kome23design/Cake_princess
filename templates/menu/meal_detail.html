@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ meal.name }} | Cake Princess{% endblock %}
+
+{% block content %}
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+{% endblock %}
+<section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            <!-- Image Gallery -->
+            <div data-aos="fade-right">
+                <div class="aspect-square rounded-3xl overflow-hidden shadow-2xl bg-cream mb-4">
+                    {% if meal.image %}
+                    <a id="main-image-link" href="{{ meal.image.url }}" class="block w-full h-full hover:opacity-90 transition-opacity cursor-pointer" title="Click to view full image">
+                        <img id="main-image" src="{{ meal.image.url }}" alt="{{ meal.name }}" class="w-full h-full object-cover transition-opacity duration-300">
+                    </a>
+                    
+                    <!-- Hidden gallery links for GLightbox -->
+                    <div class="hidden">
+                        <a href="{{ meal.image.url }}" class="glightbox gallery-hidden-link" data-gallery="meal"></a>
+                        {% for sub_image in meal.images.all %}
+                        <a href="{{ sub_image.image.url }}" class="glightbox gallery-hidden-link" data-gallery="meal"></a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-8xl">🍰</div>
+                    {% endif %}
+                </div>
+                
+                {% if meal.images.exists %}
+                <div class="grid grid-cols-4 gap-4">
+                    {% if meal.image %}
+                    <div class="aspect-square rounded-2xl overflow-hidden cursor-pointer border-2 border-gold-600 opacity-100 transition-all hover:opacity-100 hover:border-gold-600 thumbnail" onclick="changeImage(this, '{{ meal.image.url }}')">
+                        <img src="{{ meal.image.url }}" alt="{{ meal.name }}" class="w-full h-full object-cover">
+                    </div>
+                    {% endif %}
+                    {% for sub_image in meal.images.all %}
+                    <div class="aspect-square rounded-2xl overflow-hidden cursor-pointer border-2 border-transparent opacity-60 transition-all hover:opacity-100 hover:border-gold-600 thumbnail" onclick="changeImage(this, '{{ sub_image.image.url }}')">
+                        <img src="{{ sub_image.image.url }}" alt="{{ sub_image.alt_text|default:meal.name }}" class="w-full h-full object-cover">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Content -->
+            <div data-aos="fade-left">
+                <nav class="flex mb-6 text-sm text-gray-400">
+                    <a href="{% url 'menu:menu_list' %}" class="hover:text-gold-600">Menu</a>
+                    <span class="mx-2">/</span>
+                    <a href="{{ meal.category.get_absolute_url }}" class="hover:text-gold-600">{{ meal.category.name }}</a>
+                </nav>
+
+                <h1 class="font-serif text-5xl font-bold text-charcoal mb-4">{{ meal.name }}</h1>
+                <div class="flex items-center space-x-4 mb-8">
+                    <span class="text-3xl font-bold text-gold-700">{{ meal.price }} FCFA</span>
+                    {% if meal.is_available_today %}
+                    <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase">Available Today</span>
+                    {% else %}
+                    <span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full uppercase">Available on {{ meal.get_next_available_day|default:"some days" }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="prose prose-gold mb-10 text-gray-600">
+                    <p>{{ meal.description }}</p>
+                </div>
+
+                {% if meal.is_available_today %}
+                <form action="{% url 'orders:cart_add' meal.id %}" method="post" class="space-y-6">
+                    {% csrf_token %}
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center border border-gray-200 rounded-full px-4 py-2">
+                            <button type="button" onclick="decrement()" class="text-gray-500 hover:text-gold-600 font-bold px-2">-</button>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" class="w-12 text-center border-none focus:ring-0 font-bold text-charcoal">
+                            <button type="button" onclick="increment()" class="text-gray-500 hover:text-gold-600 font-bold px-2">+</button>
+                        </div>
+                        <button type="submit" class="flex-1 btn-premium text-white py-4 rounded-full font-bold shadow-lg">
+                            Add to Cart
+                        </button>
+                    </div>
+                </form>
+                {% else %}
+                <div class="bg-red-50 p-6 rounded-2xl border border-red-100">
+                    <p class="text-red-700 font-bold text-sm mb-2">Notice: This meal is not cooked today.</p>
+                    <p class="text-red-600 text-xs">Please check back on <span class="font-bold">{{ meal.get_next_available_day }}</span> or explore our other royal delicacies.</p>
+                </div>
+                {% endif %}
+
+                <!-- Features -->
+                <div class="mt-12 grid grid-cols-2 gap-6 pt-12 border-t border-gray-100">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gold-50 flex items-center justify-center text-gold-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm font-medium text-gray-500">Fast Delivery</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gold-50 flex items-center justify-center text-gold-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.040L3 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622l-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm font-medium text-gray-500">Quality Guaranteed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function increment() {
+        document.getElementById('quantity').stepUp();
+    }
+    function decrement() {
+        document.getElementById('quantity').stepDown();
+    }
+
+    function changeImage(element, newUrl) {
+        const mainImage = document.getElementById('main-image');
+        const mainImageLink = document.getElementById('main-image-link');
+        if (mainImage) {
+            mainImage.style.opacity = 0;
+            setTimeout(() => {
+                mainImage.src = newUrl;
+                if (mainImageLink) mainImageLink.href = newUrl;
+                mainImage.style.opacity = 1;
+            }, 150);
+        }
+        
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(thumb => {
+            thumb.classList.remove('border-gold-600', 'opacity-100');
+            thumb.classList.add('border-transparent', 'opacity-60');
+        });
+        
+        element.classList.remove('border-transparent', 'opacity-60');
+        element.classList.add('border-gold-600', 'opacity-100');
+    }
+</script>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const lightbox = GLightbox({ 
+            selector: '.glightbox',
+            touchNavigation: true,
+            loop: true
+        });
+
+        const mainLink = document.getElementById('main-image-link');
+        if (mainLink) {
+            mainLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                const currentHref = this.getAttribute('href');
+                
+                // Find the corresponding hidden gallery link
+                const links = Array.from(document.querySelectorAll('.gallery-hidden-link'));
+                let targetLink = links.find(link => link.getAttribute('href') === currentHref || currentHref.endsWith(link.getAttribute('href')));
+                
+                if (!targetLink && links.length > 0) {
+                    targetLink = links[0];
+                }
+                
+                if (targetLink) {
+                    targetLink.click();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

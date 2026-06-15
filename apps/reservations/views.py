@@ -1,0 +1,25 @@
+from django.views.generic import CreateView, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from .models import Reservation
+
+class ReservationCreateView(CreateView):
+    model = Reservation
+    fields = ['full_name', 'email', 'phone_number', 'reservation_type', 'date', 'time', 'guest_count', 'special_requests']
+    template_name = 'reservations/reservation_form.html'
+    success_url = reverse_lazy('reservations:reservation_list')
+
+    def form_valid(self, form):
+        if self.request.user.is_authenticated:
+            form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class ReservationListView(ListView):
+    model = Reservation
+    template_name = 'reservations/reservation_list.html'
+    context_object_name = 'reservations'
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Reservation.objects.filter(user=self.request.user)
+        return Reservation.objects.none()

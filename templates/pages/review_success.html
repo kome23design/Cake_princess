@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Review Submitted | Cake Princess{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-cream min-h-screen flex items-center justify-center">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+        <div class="glass p-12 md:p-20 rounded-[3rem] shadow-2xl border border-white/40" data-aos="zoom-in">
+            <div class="w-20 h-20 bg-gold-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h1 class="font-serif text-4xl font-bold text-charcoal mb-6">Review Received!</h1>
+            <p class="text-gray-500 text-lg mb-12">Thank you for sharing your royal experience. Your review is being moderated and will appear on the site shortly.</p>
+            <a href="{% url 'pages:review_list' %}" class="btn-premium px-10 py-4 rounded-full text-white font-bold shadow-xl inline-block">
+                Back to Reviews
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

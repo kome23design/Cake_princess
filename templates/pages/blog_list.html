@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Royal Blog | Cake Princess{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20" data-aos="fade-up">
+            <span class="text-gold-600 font-bold uppercase tracking-widest text-xs mb-4 block">The Royal Journal</span>
+            <h1 class="font-serif text-5xl md:text-6xl font-bold mb-6">Culinary <span class="text-gold-600">Insights</span></h1>
+            <p class="text-gray-500 max-w-2xl mx-auto text-lg">Stories from our kitchen, pastry tips, and the art of celebration.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {% for post in posts %}
+            <article class="group" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|slice:':1' }}00">
+                <div class="relative aspect-[16/10] rounded-[2.5rem] overflow-hidden mb-8 shadow-lg">
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    {% else %}
+                    <div class="w-full h-full bg-cream flex items-center justify-center text-4xl">✍️</div>
+                    {% endif %}
+                    <div class="absolute top-6 left-6">
+                        <span class="px-4 py-2 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest text-charcoal shadow-sm">
+                            {{ post.created_at|date:"M d" }}
+                        </span>
+                    </div>
+                </div>
+                
+                <h3 class="font-serif text-2xl font-bold text-charcoal mb-4 group-hover:text-gold-600 transition-colors">
+                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                </h3>
+                <p class="text-gray-500 text-sm mb-6 line-clamp-3 leading-relaxed">{{ post.content|striptags|truncatewords:30 }}</p>
+                
+                <a href="{{ post.get_absolute_url }}" class="inline-flex items-center text-sm font-bold text-charcoal group-hover:text-gold-600 transition-colors">
+                    Read Story
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 transform group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </a>
+            </article>
+            {% empty %}
+            <div class="col-span-full text-center py-24 glass rounded-[3rem]">
+                <p class="text-gray-400 italic">Our writers are crafting new stories. Check back soon!</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+        <div class="mt-20 flex justify-center space-x-2">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="w-12 h-12 flex items-center justify-center rounded-full border border-gray-200 hover:border-gold-600 transition-colors">&larr;</a>
+            {% endif %}
+            <span class="w-12 h-12 flex items-center justify-center rounded-full bg-gold-600 text-white font-bold">{{ page_obj.number }}</span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="w-12 h-12 flex items-center justify-center rounded-full border border-gray-200 hover:border-gold-600 transition-colors">&rarr;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

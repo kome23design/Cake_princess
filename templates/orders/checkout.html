@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout | Cake Princess{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="font-serif text-4xl font-bold mb-12">Complete Your <span class="text-gold-600">Order</span></h1>
+
+        <form action="{% url 'orders:checkout' %}" method="post">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <!-- Shipping Info -->
+                <div class="space-y-8" data-aos="fade-right">
+                    <h3 class="text-2xl font-bold border-b border-gray-100 pb-4">Delivery Details</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-gray-500 uppercase tracking-widest">Full Name</label>
+                            <input type="text" name="full_name" required value="{{ user.get_full_name }}" class="w-full px-6 py-4 rounded-2xl bg-cream border-none focus:ring-2 focus:ring-gold-600">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-gray-500 uppercase tracking-widest">Phone Number</label>
+                            <input type="text" name="phone_number" required value="{{ user.phone_number }}" placeholder="+237 ..." class="w-full px-6 py-4 rounded-2xl bg-cream border-none focus:ring-2 focus:ring-gold-600">
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="text-sm font-bold text-gray-500 uppercase tracking-widest">Email Address</label>
+                        <input type="email" name="email" required value="{{ user.email }}" class="w-full px-6 py-4 rounded-2xl bg-cream border-none focus:ring-2 focus:ring-gold-600">
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="text-sm font-bold text-gray-500 uppercase tracking-widest">Specific Address (Yaounde)</label>
+                        <textarea name="address" required rows="4" placeholder="Neighborhood, Building X, Apartment Y, Landmark..." class="w-full px-6 py-4 rounded-2xl bg-cream border-none focus:ring-2 focus:ring-gold-600">{{ user.address }}</textarea>
+                        <p class="text-[10px] text-gray-400 italic">Please provide clear directions for our delivery team.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-bold">Payment Method</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <label class="relative flex items-center p-4 rounded-2xl bg-cream border-2 border-transparent cursor-pointer hover:border-gold-200 transition-all has-[:checked]:border-gold-600 has-[:checked]:bg-gold-50">
+                                <input type="radio" name="payment_method" value="cod" checked class="hidden">
+                                <span class="font-bold">Cash on Delivery</span>
+                            </label>
+                            <label class="relative flex items-center p-4 rounded-2xl bg-cream border-2 border-transparent cursor-pointer hover:border-gold-200 transition-all has-[:checked]:border-gold-600 has-[:checked]:bg-gold-50">
+                                <input type="radio" name="payment_method" value="momo" class="hidden">
+                                <span class="font-bold">Mobile Money</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Review -->
+                <div data-aos="fade-left">
+                    <div class="glass p-10 rounded-[2.5rem] shadow-xl border border-white/40">
+                        <h3 class="text-2xl font-bold mb-8">Review Order</h3>
+                        <div class="max-h-96 overflow-y-auto space-y-6 mb-8 pr-4 custom-scrollbar">
+                            {% for item in cart %}
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 rounded-xl bg-white overflow-hidden flex-shrink-0">
+                                    {% if item.meal.image %}
+                                    <img src="{{ item.meal.image.url }}" alt="{{ item.meal.name }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                    <div class="w-full h-full flex items-center justify-center">🍰</div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-sm">{{ item.meal.name }}</h4>
+                                    <p class="text-gray-400 text-xs">{{ item.quantity }} x {{ item.price }} FCFA</p>
+                                </div>
+                                <span class="font-bold text-sm">{{ item.total_price }} FCFA</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="space-y-4 pt-8 border-t border-gray-100">
+                            <div class="flex justify-between text-gray-500">
+                                <span>Subtotal</span>
+                                <span>{{ cart.get_total_price }} FCFA</span>
+                            </div>
+                            <div class="flex justify-between text-gray-500">
+                                <span>Packaging</span>
+                                <span>{{ cart.get_packaging_fee }} FCFA</span>
+                            </div>
+                            <div class="flex flex-col text-gray-500 border-b border-gray-50 pb-4">
+                                <div class="flex justify-between">
+                                    <span>Delivery</span>
+                                    <span class="font-bold text-gold-600">To be discussed</span>
+                                </div>
+                                <p class="text-[10px] mt-1 leading-tight text-gray-400 italic">Our admin will contact you to confirm delivery charges based on your specific location.</p>
+                            </div>
+                            <div class="flex justify-between font-bold text-2xl pt-2">
+                                <span>Total</span>
+                                <span class="text-gold-700">{{ cart.get_grand_total }} FCFA</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full btn-premium text-white py-5 rounded-full font-bold text-lg mt-10 shadow-2xl">
+                            Confirm Order
+                        </button>
+                        
+                        <p class="text-center text-xs text-gray-400 mt-6">
+                            By placing an order, you agree to our <a href="#" class="underline">Terms & Conditions</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #fdfbf7;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #edba46;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
