@@ -77,4 +77,19 @@
         const menu = document.getElementById('mobile-menu');
         menu.classList.toggle('hidden');
     }
+
+    window.addEventListener('scroll', function() {
+        const menu = document.getElementById('mobile-menu');
+        if (menu && !menu.classList.contains('hidden')) {
+            menu.classList.add('hidden');
+        }
+    });
+
+    document.addEventListener('click', function(event) {
+        const menu = document.getElementById('mobile-menu');
+        const menuBtn = document.querySelector('button[onclick="toggleMobileMenu()"]');
+        if (menu && !menu.classList.contains('hidden') && !menu.contains(event.target) && (!menuBtn || !menuBtn.contains(event.target))) {
+            menu.classList.add('hidden');
+        }
+    });
 </script>
