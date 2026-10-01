@@ -9,4 +9,4 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'location', 'birth_date')
+    list_display = ('user', 'location', 'birth_date', 'reward_points')

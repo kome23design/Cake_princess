@@ -75,6 +75,61 @@
                         </div>
 
                         <div class="space-y-4 pt-8 border-t border-gray-100">
+
+                            {% comment %}
+                            <!-- COUPON SECTION — disabled for now -->
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" name="coupon_code" value="{{ coupon_code|default_if_none:'' }}" placeholder="Enter Coupon Code" class="flex-1 px-4 py-3 rounded-xl bg-cream border border-gray-100 focus:ring-2 focus:ring-gold-600 uppercase text-sm">
+                                <button type="submit" name="apply_coupon" class="px-6 py-3 rounded-xl bg-charcoal text-white font-bold text-sm hover:bg-gold-600 transition-colors">Apply</button>
+                            </div>
+                            {% endcomment %}
+
+                            {% if user.is_authenticated and setting %}
+                            <div class="bg-gradient-to-r from-gold-50 to-cream border border-gold-200 rounded-2xl p-5 mb-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <span class="text-xs font-bold uppercase tracking-widest text-gold-700">⭐ Your Reward Points</span>
+                                        <p class="text-2xl font-bold text-charcoal mt-0.5">{{ user_points }} pts</p>
+                                    </div>
+                                    <div class="text-right text-xs text-gray-500">
+                                        <p>1 pt = {{ point_value }} FCFA</p>
+                                        <p>Min to redeem: {{ min_redeemable }} pts</p>
+                                    </div>
+                                </div>
+
+                                {% if expiry_date %}
+                                <p class="text-xs text-amber-600 font-semibold mb-3">⏳ Points expire on {{ expiry_date|date:"d M Y" }}</p>
+                                {% endif %}
+
+                                {% if points_expired %}
+                                <p class="text-xs text-red-500 font-bold">⚠ Your points have expired and have been reset.</p>
+                                {% elif can_redeem %}
+                                <div class="flex gap-2 items-center">
+                                    <input type="number" name="redeem_points" id="redeem_points"
+                                        value="{{ points_to_redeem|default:0 }}"
+                                        min="0" max="{{ user_points }}"
+                                        placeholder="Points to redeem"
+                                        class="flex-1 px-4 py-2.5 rounded-xl bg-white border border-gold-200 focus:ring-2 focus:ring-gold-400 text-sm font-bold text-charcoal">
+                                    <button type="submit" name="apply_points"
+                                        class="px-5 py-2.5 rounded-xl bg-gold-600 text-white font-bold text-sm hover:bg-gold-700 transition-colors whitespace-nowrap">
+                                        Apply Points
+                                    </button>
+                                </div>
+                                {% if points_to_redeem > 0 %}
+                                <p class="text-xs text-green-600 font-bold mt-2">✓ Redeeming {{ points_to_redeem }} pts = {{ points_discount }} FCFA off</p>
+                                {% endif %}
+                                {% else %}
+                                <p class="text-xs text-gray-400 italic">
+                                    {% if user_points == 0 %}
+                                        You have no points yet. Complete orders to earn points!
+                                    {% else %}
+                                        You need at least {{ min_redeemable }} pts to redeem. You have {{ user_points }} pts — keep earning!
+                                    {% endif %}
+                                </p>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
                             <div class="flex justify-between text-gray-500">
                                 <span>Subtotal</span>
                                 <span>{{ cart.get_total_price }} FCFA</span>
@@ -90,15 +145,27 @@
                                 </div>
                                 <p class="text-[10px] mt-1 leading-tight text-gray-400 italic">Our admin will contact you to confirm delivery charges based on your specific location.</p>
                             </div>
+
+                            {% if points_discount > 0 %}
+                            <div class="flex justify-between font-bold text-green-600 pt-2">
+                                <span>Points Discount ({{ points_to_redeem }} pts)</span>
+                                <span>- {{ points_discount }} FCFA</span>
+                            </div>
+                            {% endif %}
+
                             <div class="flex justify-between font-bold text-2xl pt-2">
                                 <span>Total</span>
-                                <span class="text-gold-700">{{ cart.get_grand_total }} FCFA</span>
+                                <span class="text-gold-700">{{ final_total|default:cart.get_grand_total }} FCFA</span>
                             </div>
                         </div>
 
                         <button type="submit" class="w-full btn-premium text-white py-5 rounded-full font-bold text-lg mt-10 shadow-2xl">
                             Confirm Order
                         </button>
+
+                        <a href="{% url 'orders:cart_detail' %}" class="block w-full text-center border-2 border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-red-50 py-4 rounded-full font-bold text-lg mt-4 transition-colors">
+                            Cancel Order
+                        </a>
                         
                         <p class="text-center text-xs text-gray-400 mt-6">
                             By placing an order, you agree to our <a href="#" class="underline">Terms & Conditions</a>.

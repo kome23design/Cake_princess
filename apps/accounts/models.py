@@ -52,6 +52,23 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     location = models.CharField(max_length=100, blank=True, default='Yaounde')
     birth_date = models.DateField(null=True, blank=True)
-    
+    reward_points = models.PositiveIntegerField(default=0)
+    points_earned_at = models.DateTimeField(
+        null=True, blank=True,
+        help_text="Timestamp of when the user first earned reward points. Used to calculate expiry."
+    )
+
     def __str__(self):
         return f"{self.user.email}'s Profile"
+
+    def check_and_expire_points(self, expiry_days):
+        """Expire points if the expiry window has passed. Returns True if expired."""
+        from django.utils import timezone
+        if self.reward_points > 0 and self.points_earned_at and expiry_days:
+            expiry_date = self.points_earned_at + timezone.timedelta(days=expiry_days)
+            if timezone.now() > expiry_date:
+                self.reward_points = 0
+                self.points_earned_at = None
+                self.save(update_fields=['reward_points', 'points_earned_at'])
+                return True
+        return False

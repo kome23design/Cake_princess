@@ -12,7 +12,19 @@ class MenuListView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        queryset = Meal.objects.all()
+        import datetime
+        from django.db.models import Case, When, Value, IntegerField
+        
+        today = str(datetime.datetime.now().weekday())
+        
+        queryset = Meal.objects.annotate(
+            available_today=Case(
+                When(available_days__contains=today, is_available=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            )
+        ).order_by('-available_today', '-created_at')
+        
         category_slug = self.kwargs.get('slug')
         if category_slug:
             queryset = queryset.filter(category__slug=category_slug)
@@ -67,7 +79,18 @@ class MealSearchView(ListView):
     def get_queryset(self):
         query = self.request.GET.get('q')
         if query:
+            import datetime
+            from django.db.models import Case, When, Value, IntegerField
+            
+            today = str(datetime.datetime.now().weekday())
+            
             return Meal.objects.filter(
                 Q(name__icontains=query) | Q(description__icontains=query)
-            )
+            ).annotate(
+                available_today=Case(
+                    When(available_days__contains=today, is_available=True, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField()
+                )
+            ).order_by('-available_today', '-created_at')
         return Meal.objects.none()

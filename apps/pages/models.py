@@ -64,3 +64,14 @@ class GraduationEventImage(models.Model):
         if self.caption:
             return self.caption
         return f"Graduation Image {self.id}"
+
+class MarqueeSetting(models.Model):
+    text = models.CharField(max_length=500, help_text="Text to display in the marquee bar")
+    active = models.BooleanField(default=True)
+    
+    class Meta:
+        verbose_name = "Marquee Setting"
+        verbose_name_plural = "Marquee Settings"
+        
+    def __str__(self):
+        return self.text[:50]

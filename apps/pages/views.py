@@ -9,8 +9,19 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        import datetime
+        from django.db.models import Case, When, Value, IntegerField
+        
+        today = str(datetime.datetime.now().weekday())
+        
         context['categories'] = Category.objects.all()
-        context['featured_meals'] = Meal.objects.filter(is_daily_special=True)[:6]
+        context['featured_meals'] = Meal.objects.filter(is_daily_special=True).annotate(
+            available_today=Case(
+                When(available_days__contains=today, is_available=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            )
+        ).order_by('-available_today', '-created_at')[:6]
         context['reviews'] = Review.objects.filter(is_approved=True).order_by('-created_at')[:6]
         return context
 

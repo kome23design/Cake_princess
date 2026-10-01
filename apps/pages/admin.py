@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import BlogPost, TeamMember, TrainingApplication, GraduationEventImage
+from .models import BlogPost, TeamMember, TrainingApplication, GraduationEventImage, MarqueeSetting
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
@@ -22,3 +22,8 @@ class TrainingApplicationAdmin(admin.ModelAdmin):
 class GraduationEventImageAdmin(admin.ModelAdmin):
     list_display = ['caption', 'event_date', 'uploaded_at']
     list_filter = ['event_date']
+
+@admin.register(MarqueeSetting)
+class MarqueeSettingAdmin(admin.ModelAdmin):
+    list_display = ['text', 'active']
+    list_editable = ['active']
