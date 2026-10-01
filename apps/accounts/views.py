@@ -12,7 +12,13 @@ from .models import Profile
 class RegisterView(CreateView):
     form_class = UserRegisterForm
     template_name = 'accounts/register.html'
-    success_url = reverse_lazy('accounts:login')
+    success_url = reverse_lazy('accounts:profile')
+
+    def form_valid(self, form):
+        from django.contrib.auth import login
+        response = super().form_valid(form)
+        login(self.request, self.object)
+        return response
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/profile.html'

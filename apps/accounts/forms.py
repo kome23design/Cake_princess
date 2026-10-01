@@ -6,6 +6,15 @@ class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['email', 'first_name', 'last_name', 'phone_number', 'address']
+        help_texts = {
+            'phone_number': 'Country code (e.g. +237) is optional.',
+        }
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gold-400 bg-white/60', 'placeholder': 'First name'}),
+            'last_name': forms.TextInput(attrs={'class': 'w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gold-400 bg-white/60', 'placeholder': 'Last name'}),
+            'phone_number': forms.TextInput(attrs={'class': 'w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gold-400 bg-white/60', 'placeholder': 'Phone number'}),
+            'address': forms.Textarea(attrs={'class': 'w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gold-400 bg-white/60 resize-none', 'placeholder': 'Delivery address', 'rows': 3}),
+        }
 
 
 class EditProfileForm(forms.ModelForm):
