@@ -3,6 +3,56 @@
 
 {% block title %}Book a Table | Cake Princess{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Ensure date/time pickers never bleed over sibling fields */
+    input[type="date"],
+    input[type="time"] {
+        position: relative;
+        z-index: 1;
+    }
+    /* Keep picker popups contained */
+    input[type="date"]:not(:focus),
+    input[type="time"]:not(:focus) {
+        z-index: 0;
+    }
+    .reservation-field {
+        position: relative;
+        z-index: 2;
+    }
+    .reservation-field:focus-within {
+        z-index: 10;
+    }
+    input[type="date"],
+    input[type="time"] {
+        width: 100%;
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.75rem;
+        border: 1px solid #e5e7eb;
+        background: rgba(255,255,255,0.6);
+        font-size: 0.95rem;
+        outline: none;
+        transition: box-shadow 0.2s, border-color 0.2s;
+        color: #1a1a1a;
+        cursor: pointer;
+    }
+    input[type="date"]:focus,
+    input[type="time"]:focus {
+        box-shadow: 0 0 0 2px #bc8021;
+        border-color: #bc8021;
+    }
+    .field-label {
+        display: block;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 700;
+        color: #9ca3af;
+        margin-bottom: 0.4rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="py-24 bg-cream">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,29 +63,162 @@
                 <p class="text-gray-500 mt-4">Book a table, a surprise event, or a birthday party.</p>
             </div>
 
-            <form method="post" class="space-y-8">
+            <form id="reservationForm" method="post" class="space-y-8">
                 {% csrf_token %}
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {{ form.full_name|as_crispy_field }}
-                    {{ form.email|as_crispy_field }}
-                    {{ form.phone_number|as_crispy_field }}
-                    {{ form.reservation_type|as_crispy_field }}
-                    {{ form.date|as_crispy_field }}
-                    {{ form.time|as_crispy_field }}
-                    {{ form.guest_count|as_crispy_field }}
+                    {# Regular text fields rendered by crispy - no picker overlap issues #}
+                    <div class="reservation-field">{{ form.full_name|as_crispy_field }}</div>
+                    <div class="reservation-field">{{ form.email|as_crispy_field }}</div>
+                    <div class="reservation-field">{{ form.phone_number|as_crispy_field }}</div>
+                    <div class="reservation-field">{{ form.reservation_type|as_crispy_field }}</div>
+
+                    {# Date field — rendered manually, isolated in its own stacking context #}
+                    <div class="reservation-field" style="isolation: isolate;">
+                        <label for="{{ form.date.id_for_label }}" class="field-label">Date</label>
+                        <input
+                            type="date"
+                            name="date"
+                            id="{{ form.date.id_for_label }}"
+                            value="{{ form.date.value|default:'' }}"
+                            required
+                            onblur="this.style.zIndex='0'"
+                            onfocus="this.style.zIndex='20'"
+                        >
+                        {% if form.date.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.date.errors|join:", " }}</p>
+                        {% endif %}
+                    </div>
+
+                    {# Time field — same isolated treatment #}
+                    <div class="reservation-field" style="isolation: isolate;">
+                        <label for="{{ form.time.id_for_label }}" class="field-label">Time</label>
+                        <input
+                            type="time"
+                            name="time"
+                            id="{{ form.time.id_for_label }}"
+                            value="{{ form.time.value|default:'' }}"
+                            required
+                            onblur="this.style.zIndex='0'"
+                            onfocus="this.style.zIndex='20'"
+                        >
+                        {% if form.time.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.time.errors|join:", " }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="reservation-field">{{ form.guest_count|as_crispy_field }}</div>
                 </div>
-                {{ form.special_requests|as_crispy_field }}
-                
+
+                <div class="reservation-field">{{ form.special_requests|as_crispy_field }}</div>
+
+                {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 rounded-2xl p-4 text-red-600 text-sm">
+                    <p class="font-bold mb-2">Please correct the errors below:</p>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>• {{ field.label }}: {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>• {{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
                 <div class="pt-6">
-                    <button type="submit" class="w-full btn-premium text-white py-5 rounded-full font-bold text-lg shadow-xl">
+                    <button type="submit" id="submitBtn" class="w-full btn-premium text-white py-5 rounded-full font-bold text-lg shadow-xl">
                         Confirm Reservation
                     </button>
                     <p class="text-center text-xs text-gray-400 mt-6">
-                        We will contact you via phone or email to confirm your booking.
+                        After submitting, you'll be redirected to WhatsApp to confirm with us directly.
                     </p>
                 </div>
             </form>
         </div>
     </div>
 </section>
+
+<script>
+// Fix: Force-close any open date/time picker when the user focuses on any other field
+const dateTimeInputs = document.querySelectorAll('input[type="date"], input[type="time"]');
+const allOtherFields = document.querySelectorAll(
+    '#reservationForm input:not([type="date"]):not([type="time"]), #reservationForm select, #reservationForm textarea'
+);
+
+allOtherFields.forEach(function(field) {
+    field.addEventListener('mousedown', function() {
+        dateTimeInputs.forEach(function(picker) {
+            if (document.activeElement !== picker) return;
+            picker.blur();           // close the picker
+            picker.style.zIndex = '0';
+        });
+    });
+    field.addEventListener('focus', function() {
+        dateTimeInputs.forEach(function(picker) {
+            picker.blur();
+            picker.style.zIndex = '0';
+        });
+    });
+});
+
+// Also close pickers when clicking anywhere on the form that's not a date/time input
+document.getElementById('reservationForm').addEventListener('click', function(e) {
+    if (!e.target.matches('input[type="date"]') && !e.target.matches('input[type="time"]')) {
+        dateTimeInputs.forEach(function(picker) {
+            picker.blur();
+            picker.style.zIndex = '0';
+        });
+    }
+});
+
+// WhatsApp submission logic
+document.getElementById('reservationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span style="opacity:0.7">Saving reservation…</span>';
+
+    const fullName = form.querySelector('[name="full_name"]')?.value || '';
+    const email    = form.querySelector('[name="email"]')?.value || '';
+    const phone    = form.querySelector('[name="phone_number"]')?.value || '';
+    const typeEl   = form.querySelector('[name="reservation_type"]');
+    const type     = typeEl?.options[typeEl?.selectedIndex]?.text || '';
+    const date     = form.querySelector('[name="date"]')?.value || '';
+    const time     = form.querySelector('[name="time"]')?.value || '';
+    const guests   = form.querySelector('[name="guest_count"]')?.value || '';
+    const requests = form.querySelector('[name="special_requests"]')?.value || '';
+
+    try {
+        const formData = new FormData(form);
+        await fetch(window.location.href, { method: 'POST', body: formData });
+    } catch(err) {}
+
+    let message = `👑 *New Reservation — Cake Princess*\n\n`;
+    message += `*Name:* ${fullName}\n`;
+    message += `*Email:* ${email}\n`;
+    message += `*Phone:* ${phone}\n`;
+    message += `*Type:* ${type}\n`;
+    message += `*Date:* ${date}\n`;
+    message += `*Time:* ${time}\n`;
+    message += `*Guests:* ${guests}\n`;
+    if (requests) message += `*Special Requests:* ${requests}\n`;
+    message += `\nKindly confirm this reservation. Thank you! 🎂`;
+
+    window.open(`https://wa.me/237621643169?text=${encodeURIComponent(message)}`, '_blank');
+    
+    // Reset form and button
+    btn.innerHTML = 'Confirm Reservation';
+    btn.disabled = false;
+    form.reset();
+});
+</script>
 {% endblock %}

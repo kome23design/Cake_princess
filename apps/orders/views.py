@@ -7,6 +7,33 @@ from .cart import Cart
 from menu.models import Meal
 from django.urls import reverse_lazy
 
+class OrderSuccessView(View):
+    def get(self, request, order_id):
+        order = get_object_or_404(Order, id=order_id)
+        # Check permissions if necessary, but since it's just a success page, it's fine.
+        import urllib.parse
+        
+        # We need the order_items_text for the whatsapp message, or we can just pass the order.
+        # Actually, whatsapp_url might not be strictly needed on the success page if we already opened it,
+        # but we can provide it for the "Track on WhatsApp" button.
+        order_items_text = "\n".join([f"- {item.quantity}x {item.meal.name}" for item in order.items.all()])
+        whatsapp_message = (
+            f"Hello Cake Princess! 👑\n\n"
+            f"I have just placed an order on your website.\n"
+            f"🛍️ *Order ID:* #{order.id}\n"
+            f"📦 *Items:*\n{order_items_text}\n"
+            f"👤 *Name:* {order.full_name}\n"
+            f"📍 *Address:* {order.address}\n"
+            f"💰 *Total:* {order.total_price} FCFA\n\n"
+            f"Please confirm my order."
+        )
+        whatsapp_url = f"https://wa.me/237621643169?text={urllib.parse.quote(whatsapp_message)}"
+        
+        return render(request, 'orders/order_created.html', {
+            'order': order,
+            'whatsapp_url': whatsapp_url
+        })
+
 class CartAddView(View):
     def post(self, request, meal_id):
         from django.http import JsonResponse
@@ -209,4 +236,16 @@ class CheckoutView(View):
         encoded_message = urllib.parse.quote(whatsapp_message)
         whatsapp_url = f"https://wa.me/237621643169?text={encoded_message}"
 
-        return redirect(whatsapp_url)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            from django.http import JsonResponse
+            from django.urls import reverse
+            success_url = reverse('orders:order_success', args=[order.id])
+            return JsonResponse({
+                'whatsapp_url': whatsapp_url,
+                'success_url': success_url
+            })
+
+        return render(request, 'orders/order_created.html', {
+            'order': order,
+            'whatsapp_url': whatsapp_url
+        })
