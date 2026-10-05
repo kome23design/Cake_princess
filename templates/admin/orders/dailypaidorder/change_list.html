@@ -1,0 +1,29 @@
+{% extends "admin/change_list.html" %}
+
+{% block result_list %}
+    {% if aggregates %}
+    <div style="background-color: #f8f8f8; padding: 15px; margin-bottom: 15px; border-radius: 5px; color: #333; display: flex; gap: 20px; flex-wrap: wrap; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div style="flex: 1; min-width: 150px;">
+            <h4 style="margin: 0 0 5px 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Total Meals</h4>
+            <div style="font-size: 20px; font-weight: bold; color: #2c3e50;">{{ total_meals }}</div>
+        </div>
+        <div style="flex: 1; min-width: 150px;">
+            <h4 style="margin: 0 0 5px 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Total Price</h4>
+            <div style="font-size: 20px; font-weight: bold; color: #27ae60;">{{ aggregates.total_price_sum|default:"0" }} FCFA</div>
+        </div>
+        <div style="flex: 1; min-width: 150px;">
+            <h4 style="margin: 0 0 5px 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Points Awarded</h4>
+            <div style="font-size: 20px; font-weight: bold; color: #2980b9;">{{ aggregates.total_points_awarded|default:"0" }}</div>
+        </div>
+        <div style="flex: 1; min-width: 150px;">
+            <h4 style="margin: 0 0 5px 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Points Redeemed</h4>
+            <div style="font-size: 20px; font-weight: bold; color: #d35400;">{{ aggregates.total_points_redeemed|default:"0" }}</div>
+        </div>
+        <div style="flex: 1; min-width: 150px;">
+            <h4 style="margin: 0 0 5px 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Total Discount</h4>
+            <div style="font-size: 20px; font-weight: bold; color: #c0392b;">{{ aggregates.total_discount|default:"0" }} FCFA</div>
+        </div>
+    </div>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}

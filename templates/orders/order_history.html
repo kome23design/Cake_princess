@@ -13,18 +13,23 @@
             <div class="glass p-8 rounded-[2rem] shadow-sm border border-white/40">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                     <div>
-                        <span class="text-[10px] uppercase tracking-widest font-bold text-gray-400">Order #{{ order.id }}</span>
+                        <span class="text-[10px] uppercase tracking-widest font-bold text-gray-400">Order #{{ order.id }} {% if order.branch_name %}• 📍 {{ order.branch_name }}{% elif order.branch %}• 📍 {{ order.branch.name }}{% endif %}</span>
                         <h3 class="font-bold text-lg text-charcoal">{{ order.created_at|date:"F d, Y" }}</h3>
                     </div>
-                    <div class="mt-4 md:mt-0 flex items-center space-x-4">
-                        <span class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest
-                            {% if order.status == 'delivered' %}bg-green-100 text-green-700
-                            {% elif order.status == 'pending' %}bg-yellow-100 text-yellow-700
-                            {% elif order.status == 'cancelled' %}bg-red-100 text-red-700
-                            {% else %}bg-gold-100 text-gold-700{% endif %}">
-                            {{ order.get_status_display }}
-                        </span>
-                        <span class="font-bold text-xl text-charcoal">{{ order.total_price }} FCFA</span>
+                    <div class="mt-4 md:mt-0 flex flex-col md:items-end">
+                        <div class="flex items-center space-x-4">
+                            <span class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest
+                                {% if order.status == 'delivered' %}bg-green-100 text-green-700
+                                {% elif order.status == 'pending' %}bg-yellow-100 text-yellow-700
+                                {% elif order.status == 'cancelled' %}bg-red-100 text-red-700
+                                {% else %}bg-gold-100 text-gold-700{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                            <span class="font-bold text-xl text-charcoal">{{ order.total_price }} FCFA</span>
+                        </div>
+                        {% if order.points_redeemed %}
+                        <span class="text-xs text-gold-700 font-bold mt-1">💎 {{ order.points_redeemed }} pts redeemed (-{{ order.discount_amount }} FCFA)</span>
+                        {% endif %}
                     </div>
                 </div>
                 

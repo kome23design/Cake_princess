@@ -17,6 +17,7 @@ class Reservation(models.Model):
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reservations', null=True, blank=True)
+    branch = models.ForeignKey('pages.Branch', on_delete=models.SET_NULL, null=True, blank=True, related_name='reservations', help_text="Branch for the reservation")
     full_name = models.CharField(max_length=200)
     email = models.EmailField()
     phone_number = models.CharField(max_length=20)

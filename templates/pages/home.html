@@ -7,43 +7,46 @@
     <!-- Hero Slider -->
     <div class="swiper heroSwiper absolute inset-0 z-0">
         <div class="swiper-wrapper">
-            <div class="swiper-slide">
-                <img src="{% static 'images/exteriorr.jpg' %}" alt="Cake Princess Hero 1" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-black/50"></div>
-            </div>
-            <div class="swiper-slide">
-                <img src="{% static 'images/interior_1.jpg' %}" alt="Cake Princess Hero 2" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-black/50"></div>
-            </div>
-            <div class="swiper-slide">
-                <img src="{% static 'images/interior_7.jpg' %}" alt="Cake Princess Hero 3" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-black/50"></div>
-            </div>
-            <div class="swiper-slide">
-                <img src="{% static 'images/interior_3.jpg' %}" alt="Cake Princess Hero 4" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-black/50"></div>
-            </div>
-            <div class="swiper-slide">
-                <img src="{% static 'images/interior_4.jpg' %}" alt="Cake Princess Hero 4" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-black/50"></div>
-            </div>
-            <div class="swiper-slide">
-                <img src="{% static 'images/interior_6.jpg' %}" alt="Cake Princess Hero 4" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-black/50"></div>
-            </div>
+            {% if branch_hero_images %}
+                {% for hero_img in branch_hero_images %}
+                <div class="swiper-slide">
+                    <img src="{{ hero_img.image.url }}" alt="{{ hero_img.caption|default:branch.name }}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/55"></div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="swiper-slide">
+                    <img src="{% static 'images/exteriorr.jpg' %}" alt="Cake Princess Hero 1" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/50"></div>
+                </div>
+                <div class="swiper-slide">
+                    <img src="{% static 'images/interior_1.jpg' %}" alt="Cake Princess Hero 2" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/50"></div>
+                </div>
+                <div class="swiper-slide">
+                    <img src="{% static 'images/interior_7.jpg' %}" alt="Cake Princess Hero 3" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/50"></div>
+                </div>
+                <div class="swiper-slide">
+                    <img src="{% static 'images/interior_3.jpg' %}" alt="Cake Princess Hero 4" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/50"></div>
+                </div>
+            {% endif %}
         </div>
     </div>
     
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center h-full flex items-center justify-center">
         <div data-aos="fade-up">
-            <span class="inline-block px-4 py-1.5 mb-6 rounded-full bg-gold-600/20 text-gold-400 text-xs font-bold uppercase tracking-widest border border-gold-600/30 backdrop-blur-sm">
-                Fine Dining in Yaounde
-            </span>
+            <button onclick="openBranchModal()" class="inline-flex items-center space-x-2 px-5 py-2 mb-6 rounded-full bg-gold-600/30 text-gold-300 text-xs font-bold uppercase tracking-widest border border-gold-500/40 backdrop-blur-md hover:bg-gold-600/50 transition-all cursor-pointer shadow-lg group">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
+                <span>📍 {{ branch.name|default:"Yaounde" }} Branch — {{ branch.tagline|default:"Fine Dining & Pastry Palace" }}</span>
+                <span class="text-gold-400 font-semibold lowercase underline group-hover:text-white">(change)</span>
+            </button>
             <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight">
-                Elegance in <br> <span class="text-gold-500">Every Bite.</span>
+                {% if branch.hero_title %}{{ branch.hero_title|safe }}{% else %}Elegance in <br> <span class="text-gold-500">Every Bite.</span>{% endif %}
             </h1>
             <p class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
-                Discover a world of exquisite cakes, artisanal pastries, and gourmet meals crafted with passion and served with royalty.
+                {% if branch.hero_subtitle %}{{ branch.hero_subtitle }}{% else %}Discover a world of exquisite cakes, artisanal pastries, and gourmet meals crafted with passion and served with royalty.{% endif %}
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
                 <a href="{% url 'menu:menu_list' %}" class="btn-premium px-10 py-4 rounded-full text-white font-bold text-lg w-full sm:w-auto text-center shadow-xl">
@@ -125,7 +128,7 @@
                         {% if meal.is_available_today %}
                         <form action="{% url 'orders:cart_add' meal.id %}" method="post" class="relative z-20">
                             {% csrf_token %}
-                            <button type="submit" class="bg-charcoal text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-gold-600 transition-colors">
+                            <button type="submit" class="bg-burgundy text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-gold-600 transition-colors shadow-md">
                                 Add to Cart
                             </button>
                         </form>
@@ -158,49 +161,98 @@
     </div>
 </section>
 
+<!-- Services Offered Section -->
+{% if services %}
+<section class="py-24 bg-cream overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 space-y-4 md:space-y-0">
+            <div data-aos="fade-right">
+                <span class="text-gold-600 font-bold uppercase tracking-widest text-xs mb-2 block">
+                    📍 Available at {{ branch.name|default:"Our Branches" }}
+                </span>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-charcoal">
+                    Our Royal <span class="text-gold-600 italic">Services</span>
+                </h2>
+                <p class="text-gray-500 max-w-lg mt-2">
+                    Crafted with prestige, passion, and elegance to turn every occasion into a lifelong memory.
+                </p>
+            </div>
+            <a href="{% url 'pages:services' %}" class="text-gold-600 font-bold border-b-2 border-gold-600 pb-1 hover:text-gold-800 hover:border-gold-800 transition-all" data-aos="fade-left">
+                View All Services →
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for serv in services %}
+            <div class="bg-white rounded-[2rem] p-7 shadow-lg border border-gold-100 flex flex-col justify-between hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-gold-50 border border-gold-200 text-gold-700 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        {% if serv.icon == 'cake' %}🎂{% elif serv.icon == 'truck' %}🚚{% elif serv.icon == 'sparkles' %}✨{% elif serv.icon == 'calendar' %}📅{% elif serv.icon == 'gift' %}🎁{% elif serv.icon == 'academic' %}🎓{% else %}🍽️{% endif %}
+                    </div>
+                    {% if serv.price_starting_at %}
+                    <span class="text-[11px] font-bold text-gold-600 uppercase tracking-wider block mb-2">{{ serv.price_starting_at }}</span>
+                    {% endif %}
+                    <h3 class="font-serif text-xl font-bold text-charcoal mb-3 group-hover:text-gold-700 transition-colors">
+                        {{ serv.title }}
+                    </h3>
+                    <p class="text-gray-500 text-xs leading-relaxed line-clamp-3 mb-6">
+                        {{ serv.short_description|default:serv.description }}
+                    </p>
+                </div>
+                <a href="{% url 'pages:services' %}" class="text-xs font-bold text-charcoal hover:text-gold-600 flex items-center space-x-1 pt-4 border-t border-gray-100">
+                    <span>Learn more</span>
+                    <span>→</span>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
 <!-- Why Choose Us -->
-<section class="py-24 bg-charcoal text-white relative overflow-hidden">
-    <div class="absolute top-0 right-0 w-1/3 h-full bg-gold-600/5 -skew-x-12 translate-x-1/2"></div>
+<section class="py-24 bg-gradient-to-br from-burgundy-950 via-charcoal to-burgundy-950 text-white relative overflow-hidden border-y border-gold-500/30" style="background: linear-gradient(135deg, #240307 0%, #151112 50%, #240307 100%); background-color: #191415;">
+    <div class="absolute top-0 right-0 w-1/3 h-full bg-gold-600/5 -skew-x-12 translate-x-1/2 pointer-events-none"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div data-aos="fade-right">
                 <span class="text-gold-400 font-bold uppercase tracking-widest text-xs mb-4 block">The Royal Standards</span>
-                <h2 class="font-serif text-4xl md:text-5xl font-bold mb-8 leading-tight">Why <span class="text-gold-500 italic">Cake Princess</span> is the Crown Jewel.</h2>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold mb-8 leading-tight text-white">Why <span class="text-gold-400 italic">Cake Princess</span> is the Crown Jewel.</h2>
                 
                 <div class="space-y-10">
                     <div class="flex items-start space-x-6">
-                        <div class="w-14 h-14 rounded-2xl bg-gold-600/20 border border-gold-600/30 flex items-center justify-center flex-shrink-0">
+                        <div class="w-14 h-14 rounded-2xl bg-gold-600/20 border border-gold-500/40 flex items-center justify-center flex-shrink-0 shadow-lg shadow-black/20">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z" />
                             </svg>
                         </div>
                         <div>
-                            <h4 class="text-xl font-bold mb-2">Premium Ingredients</h4>
-                            <p class="text-gray-400 text-sm">We source only the finest organic ingredients, from Belgian chocolates to local farm-fresh dairy.</p>
+                            <h4 class="text-xl font-bold mb-2 text-white">Premium Ingredients</h4>
+                            <p class="text-gray-300 text-sm leading-relaxed">We source only the finest organic ingredients, from Belgian chocolates to local farm-fresh dairy.</p>
                         </div>
                     </div>
                     
                     <div class="flex items-start space-x-6">
-                        <div class="w-14 h-14 rounded-2xl bg-gold-600/20 border border-gold-600/30 flex items-center justify-center flex-shrink-0">
+                        <div class="w-14 h-14 rounded-2xl bg-gold-600/20 border border-gold-500/40 flex items-center justify-center flex-shrink-0 shadow-lg shadow-black/20">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                         <div>
-                            <h4 class="text-xl font-bold mb-2">Swift Delivery</h4>
-                            <p class="text-gray-400 text-sm">Our dedicated fleet ensures your order arrives fresh and hot anywhere in Yaounde within 45 minutes.</p>
+                            <h4 class="text-xl font-bold mb-2 text-white">Swift Delivery</h4>
+                            <p class="text-gray-300 text-sm leading-relaxed">Our dedicated fleet ensures your order arrives fresh and hot anywhere in Yaounde within 45 minutes.</p>
                         </div>
                     </div>
                     
                     <div class="flex items-start space-x-6">
-                        <div class="w-14 h-14 rounded-2xl bg-gold-600/20 border border-gold-600/30 flex items-center justify-center flex-shrink-0">
+                        <div class="w-14 h-14 rounded-2xl bg-gold-600/20 border border-gold-500/40 flex items-center justify-center flex-shrink-0 shadow-lg shadow-black/20">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                         <div>
-                            <h4 class="text-xl font-bold mb-2">Surprise Experts</h4>
-                            <p class="text-gray-400 text-sm">We specialize in making your engagements and birthdays unforgettable with custom decor and surprises.</p>
+                            <h4 class="text-xl font-bold mb-2 text-white">Surprise Experts</h4>
+                            <p class="text-gray-300 text-sm leading-relaxed">We specialize in making your engagements and birthdays unforgettable with custom decor and surprises.</p>
                         </div>
                     </div>
                 </div>
@@ -274,6 +326,89 @@
     </div>
 </section>
 
+<!-- Newsletter Section -->
+<section class="py-24 bg-gradient-to-br from-burgundy-950 via-charcoal to-burgundy-950 text-white relative overflow-hidden border-t border-gold-500/30" style="background: linear-gradient(135deg, #240307 0%, #151112 50%, #240307 100%); background-color: #191415;">
+    <div class="absolute inset-0 opacity-15 pointer-events-none">
+        <div class="absolute top-0 left-0 w-64 h-64 bg-gold-600 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-gold-600 rounded-full blur-[150px] translate-x-1/2 translate-y-1/2"></div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <h2 class="font-serif text-4xl md:text-5xl font-bold text-white mb-6">Join the <span class="text-gold-400 italic">Royal</span> Club</h2>
+        <p class="text-gray-200 mb-10 text-lg max-w-xl mx-auto">Subscribe to get exclusive offers, new menu alerts, and secret pastry recipes.</p>
+        
+        <form class="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
+            <input type="email" placeholder="Your email address" class="flex-1 px-8 py-5 rounded-full bg-black/40 border border-gold-500/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-transparent transition-all backdrop-blur-md text-base">
+            <button type="submit" class="btn-premium px-10 py-5 rounded-full text-white font-bold text-lg shadow-xl shadow-gold-600/30 hover:scale-105 transition-transform">
+                Subscribe
+            </button>
+        </form>
+        <p class="mt-6 text-gray-400 text-xs italic">We respect your privacy. Unsubscribe at any time.</p>
+    </div>
+</section>
+
+<!-- Reservation CTA -->
+<section class="py-24 bg-cream">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass p-12 md:p-20 rounded-[3rem] text-center shadow-2xl border border-gold-200" data-aos="zoom-in">
+            <h2 class="font-serif text-4xl md:text-6xl font-bold mb-8">Plan Your <span class="text-gold-600 italic">Royalty</span> Moment.</h2>
+            <p class="text-gray-500 text-lg mb-12 max-w-2xl mx-auto">Whether it's a romantic dinner, a surprise engagement, or a birthday celebration, we make it magical.</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                <a href="{% url 'reservations:book' %}" class="btn-premium px-12 py-5 rounded-full text-white font-bold text-lg shadow-xl">
+                    Book an Event
+                </a>
+                <a href="{% url 'pages:contact' %}" class="text-charcoal font-bold hover:text-gold-600 transition-colors">
+                    Contact for Catering
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if not user.is_authenticated %}
+<!-- Rewards Prompt Pop-Up Modal -->
+<div id="rewardsAccountModal" class="fixed inset-0 z-[95] hidden items-center justify-center bg-black/70 backdrop-blur-sm px-4 py-6 overflow-y-auto">
+    <div class="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl border border-gold-300 overflow-hidden my-auto transform transition-all duration-300">
+        <!-- Top decorative gold bar -->
+        <div class="h-2.5 w-full bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600"></div>
+
+        <button type="button" onclick="closeRewardsModal()" class="absolute top-5 right-5 text-gray-400 hover:text-charcoal bg-gray-100 hover:bg-gray-200 w-9 h-9 rounded-full flex items-center justify-center transition-colors" title="Close">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <div class="p-8 sm:p-10 text-center">
+            <div class="w-16 h-16 rounded-full bg-gold-50 border-2 border-gold-200 text-gold-600 text-3xl flex items-center justify-center mx-auto mb-4 shadow-inner">
+                🎁
+            </div>
+            
+            <span class="block text-xs font-bold uppercase tracking-widest text-gold-600 mb-1">Cake Princess Rewards</span>
+            <h3 class="font-serif text-2xl sm:text-3xl font-bold text-charcoal mb-3">Earn Points on Every Order!</h3>
+            
+            <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                Did you know? You can earn valuable loyalty reward points with every purchase at our <strong class="text-charcoal">{{ branch.name|default:"Yaounde" }}</strong> palace. Points are convertible into delicious complimentary treats and exclusive discounts!
+            </p>
+
+            <div class="bg-gold-50/70 border border-gold-200 rounded-2xl p-4 mb-6 text-xs text-gold-900 font-medium">
+                👑 <strong>Important Note:</strong> Only customers with a registered account can earn, accumulate, and redeem points. Don't let your rewards go to waste!
+            </div>
+
+            <div class="space-y-3">
+                <a href="{% url 'accounts:register' %}" class="w-full btn-premium py-3.5 rounded-full font-bold text-sm block shadow-lg" style="touch-action: manipulation;">
+                    Create Free Account & Start Earning
+                </a>
+                <a href="{% url 'accounts:login' %}" class="w-full py-3 rounded-full font-semibold text-xs text-charcoal hover:text-gold-700 bg-gray-100 hover:bg-gray-200 block transition-colors" style="touch-action: manipulation;">
+                    Already have an account? Sign In
+                </a>
+                <button type="button" onclick="closeRewardsModal()" class="text-xs text-gray-400 hover:text-gray-600 pt-2 block mx-auto underline font-medium">
+                    Continue as Guest
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
 {% block extra_js %}
 <script>
     // Hero Slider
@@ -334,50 +469,42 @@
             },
         },
     });
+
+    // Rewards Prompt Modal Logic
+    function openRewardsModal() {
+        const modal = document.getElementById('rewardsAccountModal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+    }
+
+    function closeRewardsModal() {
+        sessionStorage.setItem('cp_rewards_popup_dismissed', 'true');
+        const modal = document.getElementById('rewardsAccountModal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const rewardsDismissed = sessionStorage.getItem('cp_rewards_popup_dismissed');
+        if (!rewardsDismissed) {
+            // Check after small delay; if branch selection is already completed, show rewards modal
+            setTimeout(function() {
+                const branchModal = document.getElementById('branchModal');
+                const isBranchModalOpen = branchModal && !branchModal.classList.contains('hidden');
+                if (!isBranchModalOpen) {
+                    openRewardsModal();
+                }
+            }, 1000);
+        }
+    });
 </script>
 <style>
     .swiper-pagination-bullet-active {
-        background: #bc8021 !important;
+        background: #C8942A !important;
     }
 </style>
-{% endblock %}
-
-<!-- Newsletter Section -->
-<section class="py-24 bg-charcoal relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-0 left-0 w-64 h-64 bg-gold-600 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-gold-600 rounded-full blur-[150px] translate-x-1/2 translate-y-1/2"></div>
-    </div>
-    
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-        <h2 class="font-serif text-4xl md:text-5xl font-bold text-white mb-6">Join the <span class="text-gold-500">Royal</span> Club</h2>
-        <p class="text-gray-400 mb-10 text-lg">Subscribe to get exclusive offers, new menu alerts, and secret pastry recipes.</p>
-        
-        <form class="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
-            <input type="email" placeholder="Your email address" class="flex-1 px-8 py-5 rounded-full bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-gold-600 transition-all backdrop-blur-md">
-            <button type="submit" class="btn-premium px-10 py-5 rounded-full text-white font-bold text-lg shadow-xl shadow-gold-600/20">
-                Subscribe
-            </button>
-        </form>
-        <p class="mt-6 text-gray-500 text-xs italic">We respect your privacy. Unsubscribe at any time.</p>
-    </div>
-</section>
-
-<!-- Reservation CTA -->
-<section class="py-24 bg-cream">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="glass p-12 md:p-20 rounded-[3rem] text-center shadow-xl border border-gray-100" data-aos="zoom-in">
-            <h2 class="font-serif text-4xl md:text-6xl font-bold mb-8">Plan Your <span class="text-gold-600 italic">Royalty</span> Moment.</h2>
-            <p class="text-gray-500 text-lg mb-12 max-w-2xl mx-auto">Whether it's a romantic dinner, a surprise engagement, or a birthday celebration, we make it magical.</p>
-            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-                <a href="{% url 'reservations:book' %}" class="btn-premium px-12 py-5 rounded-full text-white font-bold text-lg shadow-xl">
-                    Book an Event
-                </a>
-                <a href="{% url 'pages:contact' %}" class="text-charcoal font-bold hover:text-gold-600 transition-colors">
-                    Contact for Catering
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
 {% endblock %}

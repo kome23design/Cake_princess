@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our Services | Cake Princess — Fine Dining & Pastry Palace{% endblock %}
+{% block meta_description %}Explore premier services by Cake Princess in Yaounde: custom cakes, luxury table bookings, surprise planning, express delivery, catering, and masterclasses.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative pt-28 pb-20 bg-gradient-to-b from-burgundy-950 via-burgundy-900 to-charcoal text-white overflow-hidden border-b border-gold-500/20">
+    <div class="absolute inset-0 z-0 opacity-20">
+        <img src="{% static 'images/interior_1.jpg' %}" alt="Cake Princess Ambience" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-b from-burgundy-950/90 via-charcoal/80 to-burgundy-950"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" data-aos="fade-up">
+        <span class="inline-block px-4 py-1.5 mb-6 rounded-full bg-gold-600/20 text-gold-400 text-xs font-bold uppercase tracking-widest border border-gold-600/30 backdrop-blur-sm">
+            Royal Hospitality & Culinary Excellence
+        </span>
+        <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
+            Services Crafted for <span class="text-gradient">Royalty</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8">
+            From bespoke multi-tier celebration cakes and romantic surprise setups to executive corporate catering and professional pastry masterclasses.
+        </p>
+
+        <!-- Active branch notice with switch button -->
+        <div class="inline-flex items-center space-x-3 px-5 py-2.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
+            <span class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
+            <span class="text-xs sm:text-sm text-gray-300">
+                Services available at <strong class="text-gold-400 font-bold">📍 {{ active_branch.name|default:"Yaounde Branches" }}</strong>
+            </span>
+            <button onclick="openBranchModal()" class="text-xs font-bold text-white bg-gold-600 hover:bg-gold-500 px-3 py-1 rounded-full transition-colors">
+                Change Branch ▾
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Services Grid Section -->
+<section class="py-24 bg-cream">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <span class="text-gold-600 font-bold uppercase tracking-widest text-xs mb-2 block">Bespoke Offerings</span>
+            <h2 class="font-serif text-4xl md:text-5xl font-bold text-charcoal">Everything We Do, Done to Perfection</h2>
+            <p class="text-gray-500 max-w-2xl mx-auto mt-4">
+                Explore our full spectrum of dining, event, and pastry services available across our Jouvence and Bastos branches.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {% for service in services %}
+            <div class="bg-white rounded-[2.5rem] shadow-xl border border-gold-100 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+                <!-- Image Header -->
+                <div class="relative h-64 overflow-hidden bg-gray-100">
+                    {% if service.image %}
+                    <img src="{{ service.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-gold-50 text-5xl">
+                        {% if service.icon == 'cake' %}🎂{% elif service.icon == 'truck' %}🚚{% elif service.icon == 'sparkles' %}✨{% elif service.icon == 'calendar' %}📅{% elif service.icon == 'gift' %}🎁{% elif service.icon == 'academic' %}🎓{% else %}🍽️{% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if service.price_starting_at %}
+                    <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold text-gold-700 shadow-md">
+                        {{ service.price_starting_at }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Branch Availability Badges -->
+                    <div class="absolute bottom-4 left-4 flex flex-wrap gap-1.5">
+                        {% if service.branches.all %}
+                            {% for b in service.branches.all %}
+                            <span class="bg-charcoal/80 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm">
+                                📍 {{ b.name }}
+                            </span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="bg-gold-600/90 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm">
+                                📍 All Branches
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Body Content -->
+                <div class="p-8 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-widest text-gold-600 mb-2">
+                            {% if service.icon == 'cake' %}Custom Patisserie{% elif service.icon == 'truck' %}Express Logistics{% elif service.icon == 'sparkles' %}VIP Experience{% elif service.icon == 'calendar' %}Dining & Banquets{% elif service.icon == 'gift' %}Corporate Packages{% elif service.icon == 'academic' %}Culinary Academy{% else %}Gourmet Catering{% endif %}
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-charcoal mb-4 group-hover:text-gold-700 transition-colors">
+                            {{ service.title }}
+                        </h3>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                            {{ service.description }}
+                        </p>
+
+                        <!-- Features list -->
+                        {% with features=service.get_features_list %}
+                        {% if features %}
+                        <div class="space-y-2.5 mb-8 border-t border-gray-100 pt-6">
+                            {% for f in features %}
+                            <div class="flex items-start space-x-2 text-xs text-gray-600">
+                                <svg class="w-4 h-4 text-gold-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span>{{ f }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <!-- Call To Action -->
+                    <div class="pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
+                        <a href="https://wa.me/237621643169?text={{ 'Hello Cake Princess! I would like to inquire about your service: '|urlencode }}{{ service.title|urlencode }}{{ ' at '|urlencode }}{{ active_branch.name|default:'Yaounde'|urlencode }}{{ ' branch.'|urlencode }}" target="_blank" class="flex-1 btn-premium text-white text-center py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md">
+                            Inquire via WhatsApp
+                        </a>
+                        {% if service.icon == 'calendar' or service.icon == 'sparkles' %}
+                        <a href="{% url 'reservations:book' %}" class="px-4 py-3 rounded-xl border border-gray-300 text-charcoal hover:bg-gold-50 font-bold text-xs uppercase tracking-wider text-center transition-colors">
+                            Book Table
+                        </a>
+                        {% elif service.icon == 'academic' %}
+                        <a href="{% url 'pages:training' %}" class="px-4 py-3 rounded-xl border border-gray-300 text-charcoal hover:bg-gold-50 font-bold text-xs uppercase tracking-wider text-center transition-colors">
+                            Learn More
+                        </a>
+                        {% else %}
+                        <a href="{% url 'menu:menu_list' %}" class="px-4 py-3 rounded-xl border border-gray-300 text-charcoal hover:bg-gold-50 font-bold text-xs uppercase tracking-wider text-center transition-colors">
+                            View Menu
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full bg-white p-12 rounded-3xl border border-gold-200 text-center shadow-md">
+                <span class="text-4xl mb-4 block">🍰</span>
+                <h3 class="font-serif text-2xl font-bold mb-2">No Services Found</h3>
+                <p class="text-gray-500 mb-6">There are no specific services listed for this branch yet. You can switch to view our other branches.</p>
+                <button onclick="openBranchModal()" class="btn-premium px-8 py-3 rounded-full text-white font-bold text-sm">
+                    Switch Branch Location
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Custom Event & Catering Banner -->
+<section class="py-20 bg-gradient-to-r from-burgundy-950 via-burgundy to-burgundy-950 text-white relative overflow-hidden border-t border-gold-500/30">
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-gold-600/10 -skew-x-12"></div>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center" data-aos="zoom-in">
+        <span class="text-gold-400 font-bold uppercase tracking-widest text-xs mb-3 block">Planning a Grand Celebration?</span>
+        <h2 class="font-serif text-4xl md:text-5xl font-bold mb-6">Need a Tailored Experience or Custom Catering?</h2>
+        <p class="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            Our executive culinary and decor team handles high-profile embassy banquets, celebrity birthdays, and dream weddings with personalized menus and luxury presentation.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="https://wa.me/237621643169?text={{ 'Hello Cake Princess! I would like to request a custom catering quote for an upcoming event at '|urlencode }}{{ active_branch.name|default:'Yaounde'|urlencode }}{{ ' branch.'|urlencode }}" target="_blank" class="w-full sm:w-auto btn-premium px-10 py-4 rounded-full text-white font-bold text-sm uppercase tracking-wider shadow-xl">
+                Chat with Event Director
+            </a>
+            <a href="{% url 'pages:contact' %}" class="w-full sm:w-auto px-10 py-4 rounded-full border border-white/30 text-white font-bold text-sm uppercase tracking-wider hover:bg-white/10 transition-all">
+                Send Us a Message
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

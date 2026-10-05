@@ -13,5 +13,7 @@ urlpatterns = [
     path('blog/', views.BlogListView.as_view(), name='blog_list'),
     path('blog/<slug:slug>/', views.BlogDetailView.as_view(), name='blog_detail'),
     path('reviews/', views.ReviewListView.as_view(), name='review_list'),
+    path('services/', views.ServicesView.as_view(), name='services'),
+    path('set-branch/<slug:slug>/', views.SetBranchView.as_view(), name='set_branch'),
     path('training/', views.TrainingView.as_view(), name='training'),
 ]

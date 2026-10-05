@@ -49,25 +49,48 @@
                     <h2 class="font-bold text-xl truncate w-full" title="{{ user.get_full_name|default:user.email }}">{{ user.get_full_name|default:user.email }}</h2>
                     <p class="text-gray-400 text-sm mb-6 truncate w-full" title="{{ user.email }}">{{ user.email }}</p>
 
-                    <div class="bg-gradient-to-r from-gold-600 to-gold-400 rounded-2xl p-4 mb-8 text-white shadow-lg">
-                        <span class="block text-[10px] uppercase tracking-widest font-bold opacity-80 mb-1">Reward Points</span>
-                        <div class="text-3xl font-bold">{{ user.profile.reward_points|default:"0" }}</div>
+                    <div class="bg-gradient-to-r from-burgundy via-burgundy-dark to-burgundy rounded-2xl p-4 mb-6 text-white shadow-lg border border-gold-400/30 text-left">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[10px] uppercase tracking-widest font-bold text-gold-300">Active Branch Rewards</span>
+                            <span class="text-[10px] bg-gold-500/20 text-gold-200 px-2 py-0.5 rounded-full font-semibold border border-gold-400/30">📍 {{ current_branch.name|default:"Main" }}</span>
+                        </div>
+                        <div class="text-3xl font-bold text-gold-100 my-1">{{ branch_points }} <span class="text-xs font-normal text-gold-300">pts</span></div>
+                        <p class="text-[10px] text-gray-300 mb-2 leading-tight">Points earned at {{ current_branch.name|default:"this branch" }} can only be redeemed at {{ current_branch.name|default:"this branch" }}.</p>
+                        
                         {% if points_days_left is not None %}
-                        <div class="mt-2 pt-2 border-t border-white border-opacity-30">
-                            <span class="text-[10px] uppercase tracking-widest font-semibold opacity-70">Expires in</span>
+                        <div class="mt-2 pt-2 border-t border-white/20">
+                            <span class="text-[10px] uppercase tracking-widest font-semibold text-gold-200/80">Expires in</span>
                             <div class="flex items-center gap-1 mt-0.5">
-                                <span class="text-base font-bold" id="points-days-left" data-expiry="{{ points_expiry_date|date:'c' }}">{{ points_days_left }}</span>
-                                <span class="text-xs font-medium opacity-80">day{{ points_days_left|pluralize }}</span>
+                                <span class="text-sm font-bold text-white" id="points-days-left" data-expiry="{{ points_expiry_date|date:'c' }}">{{ points_days_left }}</span>
+                                <span class="text-xs font-medium text-gold-200/90">day{{ points_days_left|pluralize }}</span>
                                 {% if points_days_left <= 7 %}
-                                <span class="ml-auto text-[10px] bg-white bg-opacity-20 rounded-full px-2 py-0.5 font-bold">⚠ Soon</span>
+                                <span class="ml-auto text-[10px] bg-red-500/40 text-red-200 rounded-full px-2 py-0.5 font-bold">⚠ Soon</span>
                                 {% endif %}
                             </div>
                             {% if points_expiry_date %}
-                            <p class="text-[10px] opacity-60 mt-1">{{ points_expiry_date|date:"M j, Y" }}</p>
+                            <p class="text-[9px] text-gray-300 mt-0.5">{{ points_expiry_date|date:"M j, Y" }}</p>
                             {% endif %}
                         </div>
                         {% endif %}
+
+                        {% if all_branch_rewards|length > 1 %}
+                        <div class="mt-3 pt-3 border-t border-white/20">
+                            <span class="text-[10px] uppercase tracking-wider font-bold text-gold-300 block mb-1">All Branch Balances:</span>
+                            <div class="space-y-1">
+                                {% for br in all_branch_rewards %}
+                                <div class="flex justify-between text-xs text-gray-200 {% if br.branch.slug == current_branch.slug %}font-bold text-gold-200{% endif %}">
+                                    <span>{{ br.branch.name }}:</span>
+                                    <span>{{ br.points }} pts</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
+
+                    <button type="button" onclick="openBranchModal(false)" class="w-full text-xs font-bold py-2.5 px-3 rounded-xl border border-gold-300 text-gold-700 hover:bg-gold-50 transition-colors flex items-center justify-center space-x-1.5 mb-6 shadow-sm" style="touch-action: manipulation;">
+                        <span>📍 Switch Active Branch</span>
+                    </button>
 
                     <nav class="space-y-2 text-left">
                         <a href="{% url 'accounts:profile' %}" class="block px-4 py-3 rounded-xl bg-gold-600 text-white font-bold">Profile Details</a>
@@ -80,7 +103,8 @@
             </div>
 
             <!-- Content -->
-            <div class="lg:col-span-3" data-aos="fade-left">
+            <div class="lg:col-span-3 space-y-8" data-aos="fade-left">
+                <!-- Profile Details Card -->
                 <div class="glass p-8 md:p-12 rounded-[2.5rem] shadow-xl">
                     <h3 class="font-serif text-3xl font-bold mb-8">Profile <span class="text-gold-600">Details</span></h3>
 
@@ -110,6 +134,74 @@
                     <div class="mt-12 flex flex-wrap gap-4">
                         <a href="{% url 'accounts:edit_profile' %}" class="btn-premium px-8 py-3 rounded-full text-white font-bold text-sm inline-block text-center">Edit Profile</a>
                         <a href="{% url 'accounts:change_password' %}" class="px-8 py-3 rounded-full border border-gray-200 text-gray-500 font-bold text-sm hover:bg-gray-50 transition-colors inline-block text-center">Change Password</a>
+                    </div>
+                </div>
+
+                <!-- Branch Selection & Loyalty Hub -->
+                <div class="glass p-8 md:p-12 rounded-[2.5rem] shadow-xl">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-gold-600 block mb-1">Palace Locations</span>
+                            <h3 class="font-serif text-3xl font-bold text-charcoal">Select Your <span class="text-gold-600">Branch</span></h3>
+                            <p class="text-xs text-gray-500 mt-1">Switch your active branch below. Loyalty reward points are branch-specific and can be redeemed at that branch.</p>
+                        </div>
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold bg-gold-50 text-gold-800 border border-gold-300 shadow-sm self-start sm:self-auto">
+                            📍 Current: {{ current_branch.name|default:"None" }}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {% for binfo in branches_with_info %}
+                        <div class="rounded-3xl border-2 p-6 transition-all duration-300 flex flex-col justify-between {% if binfo.is_current %}border-gold-600 bg-gold-50/60 shadow-lg shadow-gold-600/10{% else %}border-gray-200 bg-white hover:border-gold-300 hover:bg-gold-50/20 shadow-sm{% endif %}">
+                            <div>
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 rounded-2xl bg-gold-100 text-gold-700 flex items-center justify-center font-bold">
+                                            📍
+                                        </div>
+                                        <div>
+                                            <h4 class="font-serif text-xl font-bold text-charcoal">{{ binfo.branch.name }}</h4>
+                                            {% if binfo.branch.tagline %}
+                                            <p class="text-[11px] text-gold-700 font-semibold">{{ binfo.branch.tagline }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if binfo.is_current %}
+                                    <span class="bg-gold-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">Active ✓</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="space-y-1.5 text-xs text-gray-500 my-4">
+                                    <p class="flex items-center space-x-2">
+                                        <span class="text-gray-400">🏢</span>
+                                        <span>{{ binfo.branch.address }}</span>
+                                    </p>
+                                    <p class="flex items-center space-x-2">
+                                        <span class="text-gray-400">📞</span>
+                                        <span>{{ binfo.branch.phone }}</span>
+                                    </p>
+                                </div>
+
+                                <div class="my-4 p-3.5 rounded-2xl bg-white/80 border border-gray-100 flex items-center justify-between">
+                                    <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Loyalty Points:</span>
+                                    <span class="text-lg font-bold text-burgundy font-serif">{{ binfo.points }} <span class="text-xs font-normal text-gray-400">pts</span></span>
+                                </div>
+                            </div>
+
+                            <div class="pt-2">
+                                {% if binfo.is_current %}
+                                <button type="button" disabled class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-gold-600 text-white shadow-md cursor-default flex items-center justify-center space-x-2">
+                                    <span>✓ Currently Selected Palace</span>
+                                </button>
+                                {% else %}
+                                <button type="button" onclick="selectBranch('{{ binfo.branch.slug }}')" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-charcoal text-white hover:bg-gold-600 transition-all shadow-md group flex items-center justify-center space-x-2" style="touch-action: manipulation;">
+                                    <span>Switch to {{ binfo.branch.name }}</span>
+                                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

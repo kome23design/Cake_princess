@@ -33,8 +33,8 @@
                 <div class="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl">
                     <img src="{% static 'images/about_sec1.jpg' %}" alt="Our Craft" class="w-full h-full object-cover">
                 </div>
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-gold-600 rounded-full flex items-center justify-center border-8 border-white shadow-xl">
-                    <span class="text-white font-serif text-4xl italic font-bold">CP</span>
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-burgundy via-burgundy-dark to-charcoal rounded-full flex items-center justify-center border-4 border-gold-400 shadow-2xl">
+                    <span class="text-gold-200 font-serif text-4xl italic font-bold">CP</span>
                 </div>
             </div>
         </div>
@@ -45,19 +45,19 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="font-serif text-4xl font-bold mb-16">Our Core <span class="text-gold-600">Values</span></h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="glass p-10 rounded-[2.5rem] shadow-sm" data-aos="fade-up" data-aos-delay="100">
-                <div class="w-16 h-16 bg-gold-100 rounded-2xl flex items-center justify-center text-gold-600 mx-auto mb-6 text-2xl font-bold">01</div>
-                <h3 class="text-xl font-bold mb-4">Uncompromising Quality</h3>
+            <div class="glass p-10 rounded-[2.5rem] shadow-sm border border-gold-100" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-16 h-16 bg-gradient-to-br from-burgundy to-burgundy-dark rounded-2xl flex items-center justify-center text-gold-300 mx-auto mb-6 text-2xl font-bold shadow-md border border-gold-400/40">01</div>
+                <h3 class="text-xl font-bold mb-4 text-charcoal">Uncompromising Quality</h3>
                 <p class="text-gray-500 text-sm">We use only the finest ingredients, sourced locally and internationally, to ensure perfection.</p>
             </div>
-            <div class="glass p-10 rounded-[2.5rem] shadow-sm" data-aos="fade-up" data-aos-delay="200">
-                <div class="w-16 h-16 bg-gold-100 rounded-2xl flex items-center justify-center text-gold-600 mx-auto mb-6 text-2xl font-bold">02</div>
-                <h3 class="text-xl font-bold mb-4">Artisan Innovation</h3>
+            <div class="glass p-10 rounded-[2.5rem] shadow-sm border border-gold-100" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-16 h-16 bg-gradient-to-br from-burgundy to-burgundy-dark rounded-2xl flex items-center justify-center text-gold-300 mx-auto mb-6 text-2xl font-bold shadow-md border border-gold-400/40">02</div>
+                <h3 class="text-xl font-bold mb-4 text-charcoal">Artisan Innovation</h3>
                 <p class="text-gray-500 text-sm">Our chefs are artists, constantly pushing the boundaries of flavor and presentation.</p>
             </div>
-            <div class="glass p-10 rounded-[2.5rem] shadow-sm" data-aos="fade-up" data-aos-delay="300">
-                <div class="w-16 h-16 bg-gold-100 rounded-2xl flex items-center justify-center text-gold-600 mx-auto mb-6 text-2xl font-bold">03</div>
-                <h3 class="text-xl font-bold mb-4">Customer Royalty</h3>
+            <div class="glass p-10 rounded-[2.5rem] shadow-sm border border-gold-100" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-16 h-16 bg-gradient-to-br from-burgundy to-burgundy-dark rounded-2xl flex items-center justify-center text-gold-300 mx-auto mb-6 text-2xl font-bold shadow-md border border-gold-400/40">03</div>
+                <h3 class="text-xl font-bold mb-4 text-charcoal">Customer Royalty</h3>
                 <p class="text-gray-500 text-sm">Every customer is a guest of honor. We treat your celebrations as if they were our own.</p>
             </div>
         </div>
@@ -113,102 +113,142 @@
     </div>
 </section>
 
-<!-- Our Team -->
+<!-- Flagship Branch Palaces -->
 <section class="py-24 bg-cream">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-20" data-aos="fade-up">
-            <span class="text-gold-600 font-bold uppercase tracking-widest text-xs mb-4 block">Our Team</span>
-            <h2 class="font-serif text-4xl md:text-5xl font-bold">Meet the <span class="text-gold-600 italic">Artists</span></h2>
+        <div class="text-center max-w-3xl mx-auto mb-16" data-aos="fade-up">
+            <span class="text-gold-600 font-bold uppercase tracking-widest text-xs mb-3 block">Flagship Destinations</span>
+            <h2 class="font-serif text-4xl md:text-5xl font-bold mb-4">Our Palaces in <span class="text-gold-600 italic">Yaounde</span></h2>
+            <p class="text-gray-500 text-base leading-relaxed">
+                Step into a haven of warmth and refined taste. Each of our locations offers an authentic ambiance, artisan delicacies, and dedicated hospitality.
+            </p>
         </div>
-        
-        <div class="swiper teamSwiper px-4 py-8">
-            <div class="swiper-wrapper">
-                {% for member in team_members %}
-                <div class="swiper-slide">
-                    <div class="text-center" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
-                        <div class="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6 shadow-xl border-4 border-white">
-                            {% if member.image %}
-                            <img src="{{ member.image.url }}" alt="{{ member.name }}" class="w-full h-full object-cover">
-                            {% else %}
-                            <div class="w-full h-full bg-gold-100 flex items-center justify-center text-4xl text-gold-600">👩‍🍳</div>
-                            {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {% for branch in branches %}
+            <div class="glass p-8 sm:p-10 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gold-200/60 flex flex-col justify-between" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="px-4 py-1.5 rounded-full bg-gold-100 text-gold-800 text-xs font-bold uppercase tracking-wider">
+                            Branch #0{{ forloop.counter }}
+                        </span>
+                        {% if branch.slug == current_branch.slug %}
+                        <span class="inline-flex items-center text-xs font-semibold text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-200">
+                            <span class="w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse"></span> Your Active Branch
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="font-serif text-3xl font-bold text-charcoal mb-2">{{ branch.name }}</h3>
+                    <p class="text-gold-700 font-medium text-sm mb-6">{{ branch.tagline|default:"Artisan Pastries & Fine Dining" }}</p>
+
+                    <div class="space-y-4 mb-8 text-sm text-gray-600">
+                        <div class="flex items-start space-x-3">
+                            <svg class="w-5 h-5 text-gold-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <span>{{ branch.address }}</span>
                         </div>
-                        <h4 class="text-xl font-bold text-charcoal">{{ member.name }}</h4>
-                        <p class="text-gold-600 font-medium text-sm mb-4">{{ member.role }}</p>
-                        <p class="text-gray-500 text-sm">{{ member.bio }}</p>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-gold-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                            <span>{{ branch.phone }}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-gold-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span>{{ branch.opening_hours }}</span>
+                        </div>
                     </div>
                 </div>
-                {% empty %}
-                <!-- Static Placeholders if no members added yet -->
-                <div class="swiper-slide">
-                    <div class="text-center" data-aos="fade-up" data-aos-delay="100">
-                        <div class="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6 shadow-xl border-4 border-white">
-                            <img src="{% static 'images/chef_1.jpg' %}" alt="Head Chef" class="w-full h-full object-cover">
-                        </div>
-                        <h4 class="text-xl font-bold text-charcoal">Chef Bella</h4>
-                        <p class="text-gold-600 font-medium text-sm mb-4">Executive Pastry Chef</p>
-                        <p class="text-gray-500 text-sm">Bella brings 15 years of experience in French pastry arts, blending them with Cameroonian soul.</p>
-                    </div>
+
+                <div class="pt-6 border-t border-gold-200/50 flex flex-wrap items-center justify-between gap-4">
+                    <a href="{% url 'pages:set_branch' branch.slug %}" class="inline-flex items-center space-x-2 text-sm font-bold text-gold-700 hover:text-gold-900 transition-colors">
+                        <span>Select this Branch</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
+                    <a href="https://wa.me/237621643169?text={{ 'Hello Cake Princess! I would like to inquire about your '|urlencode }}{{ branch.name|urlencode }}{{ ' branch.'|urlencode }}" target="_blank" class="inline-flex items-center space-x-2 text-xs font-semibold bg-white px-4 py-2 rounded-xl text-charcoal border border-gray-200 hover:border-gold-400 hover:text-gold-700 transition-all shadow-sm">
+                        <span>WhatsApp Branch</span>
+                    </a>
                 </div>
-                
-                <div class="swiper-slide">
-                    <div class="text-center" data-aos="fade-up" data-aos-delay="200">
-                        <div class="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6 shadow-xl border-4 border-white">
-                            <img src="{% static 'images/chef_2.jpg' %}" alt="Sous Chef" class="w-full h-full object-cover">
-                        </div>
-                        <h4 class="text-xl font-bold text-charcoal">Chef Marc</h4>
-                        <p class="text-gold-600 font-medium text-sm mb-4">Head of Culinary</p>
-                        <p class="text-gray-500 text-sm">Marc specializes in gourmet meals and fusion flavors that delight our diners every day.</p>
-                    </div>
-                </div>
-                
-                <div class="swiper-slide">
-                    <div class="text-center" data-aos="fade-up" data-aos-delay="300">
-                        <div class="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6 shadow-xl border-4 border-white">
-                            <img src="{% static 'images/chef_3.jpg' %}" alt="Cake Designer" class="w-full h-full object-cover">
-                        </div>
-                        <h4 class="text-xl font-bold text-charcoal">Elena Joy</h4>
-                        <p class="text-gold-600 font-medium text-sm mb-4">Lead Cake Designer</p>
-                        <p class="text-gray-500 text-sm">Elena's hands create the magic for your weddings and surprises, turning sugar into dreams.</p>
-                    </div>
-                </div>
-                {% endfor %}
             </div>
-            <!-- Add Pagination -->
-            <div class="swiper-pagination"></div>
+            {% empty %}
+            <div class="col-span-2 text-center py-12 text-gray-500">
+                <p>Jouvence & Bastos locations welcoming you daily in Yaounde.</p>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
 
-{% block extra_js %}
-<script>
-    var swiper = new Swiper(".teamSwiper", {
-        slidesPerView: 1,
-        spaceBetween: 30,
-        loop: true,
-        autoplay: {
-            delay: 3000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 1,
-                spaceBetween: 20,
-            },
-            768: {
-                slidesPerView: 2,
-                spaceBetween: 40,
-            },
-            1024: {
-                slidesPerView: 3,
-                spaceBetween: 50,
-            },
-        },
-    });
-</script>
-{% endblock %}
+<!-- Culinary Standards & Craftsmanship -->
+<section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16" data-aos="fade-up">
+            <span class="text-gold-600 font-bold uppercase tracking-widest text-xs mb-3 block">Our Manifesto</span>
+            <h2 class="font-serif text-4xl md:text-5xl font-bold mb-4">The Royal <span class="text-gold-600">Kitchen Promise</span></h2>
+            <p class="text-gray-500 text-base leading-relaxed">
+                Behind every bite is a meticulous dedication to classical pastry techniques, premium raw ingredients, and heartfelt Cameroonian hospitality.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="p-8 rounded-3xl bg-cream/60 border border-gold-100 hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-14 h-14 rounded-2xl bg-gold-100 text-gold-700 flex items-center justify-center text-2xl mb-6 shadow-sm">
+                    🧈
+                </div>
+                <h3 class="font-serif text-xl font-bold text-charcoal mb-3">100% Real Butter</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Zero shortcuts. We bake exclusively with high-grade dairy butter and authentic cocoa for rich, unforgettable flavor.
+                </p>
+            </div>
+
+            <div class="p-8 rounded-3xl bg-cream/60 border border-gold-100 hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-14 h-14 rounded-2xl bg-gold-100 text-gold-700 flex items-center justify-center text-2xl mb-6 shadow-sm">
+                    🌅
+                </div>
+                <h3 class="font-serif text-xl font-bold text-charcoal mb-3">Baked Daily at Dawn</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Our pastries and cake sponges are prepared fresh every morning before sunrise so you always taste absolute perfection.
+                </p>
+            </div>
+
+            <div class="p-8 rounded-3xl bg-cream/60 border border-gold-100 hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-14 h-14 rounded-2xl bg-gold-100 text-gold-700 flex items-center justify-center text-2xl mb-6 shadow-sm">
+                    🎂
+                </div>
+                <h3 class="font-serif text-xl font-bold text-charcoal mb-3">Bespoke Cake Artistry</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    From sculpted multi-tier wedding cakes to custom mirror glazes, each creation is designed precisely to your vision.
+                </p>
+            </div>
+
+            <div class="p-8 rounded-3xl bg-cream/60 border border-gold-100 hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="400">
+                <div class="w-14 h-14 rounded-2xl bg-gold-100 text-gold-700 flex items-center justify-center text-2xl mb-6 shadow-sm">
+                    ✨
+                </div>
+                <h3 class="font-serif text-xl font-bold text-charcoal mb-3">White-Glove Service</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Enjoy seamless dining reservations, elegant surprise decor setups, and reliable citywide delivery across Yaounde.
+                </p>
+            </div>
+        </div>
+
+        <!-- Royal Invitation Banner -->
+        <div class="mt-20 bg-gradient-to-r from-burgundy-950 via-burgundy to-burgundy-950 rounded-3xl p-10 md:p-14 text-white relative overflow-hidden shadow-2xl border border-gold-500/30" data-aos="fade-up">
+            <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-gold-600/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="relative z-10 max-w-3xl">
+                <span class="text-gold-400 font-bold uppercase tracking-widest text-xs mb-3 block">Experience the Magic</span>
+                <h3 class="font-serif text-3xl md:text-4xl font-bold mb-4">Ready for an Unforgettable Culinary Journey?</h3>
+                <p class="text-gray-300 text-base leading-relaxed mb-8">
+                    Whether you are planning an intimate dinner, reserving high tea with friends, or ordering a custom celebration cake, our team is ready to serve you like royalty.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="{% url 'reservations:book' %}" class="btn-gold px-8 py-3.5 text-sm font-bold shadow-lg">
+                        Reserve a Table
+                    </a>
+                    <a href="{% url 'pages:services' %}" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-8 py-3.5 rounded-full text-sm font-bold transition-all">
+                        Explore Our Services
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

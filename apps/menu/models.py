@@ -8,6 +8,7 @@ class Category(models.Model):
     slug = models.SlugField(unique=True)
     image = models.ImageField(upload_to='categories/', blank=True, null=True)
     description = models.TextField(blank=True)
+    branches = models.ManyToManyField('pages.Branch', related_name='categories', blank=True, help_text="Branches where this category is offered. Leave empty to show in ALL branches.")
 
     class Meta:
         verbose_name_plural = 'Categories'
@@ -20,6 +21,7 @@ class Category(models.Model):
 
 class Meal(models.Model):
     category = models.ForeignKey(Category, related_name='meals', on_delete=models.CASCADE)
+    branches = models.ManyToManyField('pages.Branch', related_name='meals', blank=True, help_text="Branches where this meal is available. Leave empty to show in ALL branches.")
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     description = models.TextField()
@@ -72,6 +74,7 @@ class MealImage(models.Model):
 
 class Review(models.Model):
     meal = models.ForeignKey(Meal, related_name='reviews', on_delete=models.CASCADE)
+    branch = models.ForeignKey('pages.Branch', on_delete=models.SET_NULL, null=True, blank=True, related_name='reviews', help_text="Branch this review is associated with (leave blank for all).")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.TextField()

@@ -28,33 +28,52 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         # Ensure profile exists
         profile, _ = Profile.objects.get_or_create(user=self.request.user)
 
-        # Compute points expiry info
+        # Compute branch-specific points info
+        from pages.views import get_current_branch
+        current_branch = get_current_branch(self.request)
+        branch_points = 0
+        branch_reward = None
         points_expiry_date = None
         points_days_left = None
-        try:
-            from orders.models import RewardSetting
-            setting = RewardSetting.objects.first()
-            if setting and setting.points_expiry_days and profile.reward_points > 0:
-                # Backfill points_earned_at for legacy profiles that have points but no timestamp
-                if not profile.points_earned_at:
-                    profile.points_earned_at = timezone.now()
-                    profile.save(update_fields=['points_earned_at'])
 
-                # Auto-expire if window has passed
-                profile.check_and_expire_points(setting.points_expiry_days)
-                # Refresh from DB in case expiry just ran
-                profile.refresh_from_db()
+        if current_branch:
+            branch_reward = self.request.user.branch_rewards.filter(branch=current_branch).first()
+            if branch_reward:
+                from orders.models import RewardSetting
+                setting = RewardSetting.objects.filter(branch=current_branch).first() or RewardSetting.objects.first()
+                if setting and setting.points_expiry_days and branch_reward.points > 0:
+                    branch_reward.check_and_expire_points(setting.points_expiry_days)
+                    branch_reward.refresh_from_db()
+                    if branch_reward.points > 0 and branch_reward.points_earned_at:
+                        points_expiry_date = branch_reward.points_earned_at + timezone.timedelta(
+                            days=setting.points_expiry_days
+                        )
+                        delta = points_expiry_date - timezone.now()
+                        points_days_left = max(0, delta.days)
+                branch_points = branch_reward.points
 
-                if profile.reward_points > 0 and profile.points_earned_at:
-                    points_expiry_date = profile.points_earned_at + timezone.timedelta(
-                        days=setting.points_expiry_days
-                    )
-                    delta = points_expiry_date - timezone.now()
-                    points_days_left = max(0, delta.days)
-        except Exception:
-            pass
+        all_branch_rewards = list(self.request.user.branch_rewards.select_related('branch').all())
+        
+        # Build comprehensive branch selection list with user points
+        from pages.models import Branch
+        all_active_branches = list(Branch.objects.filter(is_active=True).order_by('order', 'name'))
+        branch_rewards_map = {br.branch_id: br for br in self.request.user.branch_rewards.all()}
+        branches_with_info = []
+        for b in all_active_branches:
+            rw = branch_rewards_map.get(b.id)
+            branches_with_info.append({
+                'branch': b,
+                'is_current': bool(current_branch and b.id == current_branch.id),
+                'points': rw.points if rw else 0,
+                'reward': rw
+            })
 
         context['profile'] = profile
+        context['current_branch'] = current_branch
+        context['branch_points'] = branch_points
+        context['branch_reward'] = branch_reward
+        context['all_branch_rewards'] = all_branch_rewards
+        context['branches_with_info'] = branches_with_info
         context['points_expiry_date'] = points_expiry_date
         context['points_days_left'] = points_days_left
         context['edit_form'] = EditProfileForm(instance=self.request.user)
@@ -78,12 +97,20 @@ class EditProfileView(LoginRequiredMixin, View):
 
 class CustomLogoutView(View):
     def get(self, request):
-        logout(request)
-        return redirect('pages:home')
+        return self._do_logout(request)
 
     def post(self, request):
+        return self._do_logout(request)
+
+    def _do_logout(self, request):
         logout(request)
-        return redirect('pages:home')
+        request.session.flush()
+        from django.urls import reverse
+        home_url = reverse('pages:home') + '?logged_out=1&branch_prompt=1'
+        response = redirect(home_url)
+        response.delete_cookie('selected_branch_slug')
+        response.delete_cookie('selected_branch_id')
+        return response
 
 class ChangePasswordView(LoginRequiredMixin, View):
     def get(self, request):

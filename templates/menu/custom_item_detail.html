@@ -48,7 +48,7 @@
                 </div>
                 {% endif %}
 
-                <form method="post" action="{% url 'menu:custom_item_detail' item.slug %}">
+                <form method="post" action="{% url 'menu:custom_item_detail' item.slug %}" target="_blank">
                     {% csrf_token %}
                     <div class="space-y-6">
                         {% for field in form %}
@@ -62,11 +62,15 @@
                         {% endfor %}
                         
                         <div class="pt-4">
-                            <button type="submit" class="w-full btn-premium px-8 py-4 rounded-xl text-white font-bold text-lg shadow-xl shadow-gold-600/20">
-                                Send Inquiry
+                            <button type="submit" class="w-full flex items-center justify-center space-x-3 btn-burgundy text-gold-200 hover:text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-burgundy/20 hover:opacity-95 transition-all">
+                                <span>Send Inquiry to Admin on WhatsApp</span>
+                                <svg class="w-6 h-6 text-green-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.768.804 2.802.804 3.182 0 5.768-2.587 5.769-5.766.001-3.186-2.575-5.79-5.775-5.79zm3.376 8.214c-.149.421-.734.782-1.026.832-.279.048-.646.082-2.146-.539-1.802-.746-2.955-2.587-3.045-2.707-.09-.12-0.73-0.971-.73-1.852 0-.881.46-1.314.624-1.493.164-.179.359-.224.479-.224.12 0 .239.001.344.006.11.005.257-.042.402.308.149.359.508 1.239.553 1.329.045.09.075.194.015.314-.06.12-.09.194-.179.299-.09.105-.194.234-.277.314-.092.088-.188.184-.081.368.107.184.475.784 1.02 1.27.701.624 1.29.818 1.474.908.184.09.292.079.401-.045.11-.125.469-.548.594-.736.125-.188.25-.157.421-.093.171.064 1.085.511 1.272.604.188.093.313.14.359.219.046.079.046.459-.103.88z"/></svg>
                             </button>
                         </div>
-                        <p class="text-xs text-gray-400 text-center mt-4">No payment is required to submit this inquiry.</p>
+                        <p class="text-xs text-gray-500 text-center mt-4 flex items-center justify-center gap-1.5">
+                            <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                            <span>Redirects directly to WhatsApp with your customized inquiry details.</span>
+                        </p>
                     </div>
                 </form>
             </div>

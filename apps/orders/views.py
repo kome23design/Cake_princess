@@ -17,17 +17,22 @@ class OrderSuccessView(View):
         # Actually, whatsapp_url might not be strictly needed on the success page if we already opened it,
         # but we can provide it for the "Track on WhatsApp" button.
         order_items_text = "\n".join([f"- {item.quantity}x {item.meal.name}" for item in order.items.all()])
+        branch_info = f"📍 *Branch:* {order.branch_name or (order.branch.name if order.branch else 'Not specified')}\n" if (order.branch or order.branch_name) else ""
+        points_info = f"💎 *Points Redeemed:* {order.points_redeemed} pts (Saved {order.discount_amount} FCFA with Reward Points!)\n" if (order.points_redeemed and order.points_redeemed > 0) else ""
         whatsapp_message = (
             f"Hello Cake Princess! 👑\n\n"
             f"I have just placed an order on your website.\n"
             f"🛍️ *Order ID:* #{order.id}\n"
+            f"{branch_info}"
             f"📦 *Items:*\n{order_items_text}\n"
             f"👤 *Name:* {order.full_name}\n"
             f"📍 *Address:* {order.address}\n"
-            f"💰 *Total:* {order.total_price} FCFA\n\n"
+            f"{points_info}"
+            f"💰 *Total To Pay:* {order.total_price} FCFA\n\n"
             f"Please confirm my order."
         )
-        whatsapp_url = f"https://wa.me/237621643169?text={urllib.parse.quote(whatsapp_message)}"
+        admin_phone = "237621643169"
+        whatsapp_url = f"https://wa.me/{admin_phone}?text={urllib.parse.quote(whatsapp_message)}"
         
         return render(request, 'orders/order_created.html', {
             'order': order,
@@ -69,11 +74,46 @@ class OrderHistoryView(ListView):
             return Order.objects.filter(user=self.request.user)
         return Order.objects.none()
 
+def _resolve_order_branch(request):
+    """Determine the active branch for an order or cart view."""
+    from pages.models import Branch
+    branch_id = request.POST.get('branch_id') if request.method == 'POST' else None
+    branch = None
+    if branch_id:
+        try:
+            branch = Branch.objects.filter(id=int(branch_id), is_active=True).first()
+        except (ValueError, TypeError):
+            branch = None
+    if not branch:
+        slug = request.session.get('selected_branch_slug') or request.COOKIES.get('selected_branch_slug')
+        bid = request.session.get('selected_branch_id') or request.COOKIES.get('selected_branch_id')
+        if slug:
+            branch = Branch.objects.filter(slug=slug, is_active=True).first()
+        elif bid:
+            try:
+                branch = Branch.objects.filter(id=int(bid), is_active=True).first()
+            except (ValueError, TypeError):
+                branch = None
+    if not branch:
+        branch = Branch.objects.filter(is_default=True, is_active=True).first() or Branch.objects.filter(is_active=True).first()
+    return branch
+
+
+def _get_reward_setting(branch=None):
+    """Retrieve RewardSetting for a branch, with fallback to global setting."""
+    if branch:
+        setting = RewardSetting.objects.filter(branch=branch).first()
+        if setting:
+            return setting
+    return RewardSetting.objects.filter(branch__isnull=True).first() or RewardSetting.objects.first()
+
+
 def _get_reward_context(request, cart):
     """Helper: compute points-redeem discount and build context extras."""
     from django.utils import timezone
 
-    setting = RewardSetting.objects.first()
+    branch = _resolve_order_branch(request)
+    setting = _get_reward_setting(branch)
     user_points = 0
     points_to_redeem = 0
     points_discount = 0
@@ -86,14 +126,21 @@ def _get_reward_context(request, cart):
         min_redeemable = setting.min_redeemable_points
         point_value = setting.points_value_in_fcfa
 
-    if request.user.is_authenticated and hasattr(request.user, 'profile'):
-        profile = request.user.profile
-        # Check and auto-expire points if window has passed
-        if setting and setting.points_expiry_days:
-            points_expired = profile.check_and_expire_points(setting.points_expiry_days)
-            if not points_expired and profile.points_earned_at and setting.points_expiry_days:
-                expiry_date = profile.points_earned_at + timezone.timedelta(days=setting.points_expiry_days)
-        user_points = profile.reward_points
+    if request.user.is_authenticated:
+        if branch and hasattr(request.user, 'get_branch_points'):
+            record = request.user.get_branch_reward_record(branch)
+            if record and setting and setting.points_expiry_days:
+                points_expired = record.check_and_expire_points(setting.points_expiry_days)
+                if not points_expired and record.points_earned_at and setting.points_expiry_days:
+                    expiry_date = record.points_earned_at + timezone.timedelta(days=setting.points_expiry_days)
+            user_points = request.user.get_branch_points(branch)
+        elif hasattr(request.user, 'profile'):
+            profile = request.user.profile
+            if setting and setting.points_expiry_days:
+                points_expired = profile.check_and_expire_points(setting.points_expiry_days)
+                if not points_expired and profile.points_earned_at and setting.points_expiry_days:
+                    expiry_date = profile.points_earned_at + timezone.timedelta(days=setting.points_expiry_days)
+            user_points = profile.reward_points
 
     # Points the user wants to redeem this session
     points_to_redeem = int(request.session.get('redeem_points', 0))
@@ -150,27 +197,51 @@ class CheckoutView(View):
         delivery_charge = 0
         grand_total = cart.get_grand_total()
 
+        # Branch resolution
+        branch = _resolve_order_branch(request)
+        branch_name = branch.name if branch else 'Main'
+
         # --- Points redemption ---
         discount_amount = 0
         redeemed_points = 0
-        setting = RewardSetting.objects.first()
-        if request.user.is_authenticated and setting and hasattr(request.user, 'profile'):
-            profile = request.user.profile
+        setting = _get_reward_setting(branch)
+        if request.user.is_authenticated and setting:
+            if branch and hasattr(request.user, 'get_branch_points'):
+                user_available_pts = request.user.get_branch_points(branch)
+            elif hasattr(request.user, 'profile'):
+                user_available_pts = request.user.profile.reward_points
+            else:
+                user_available_pts = 0
+
             pts_requested = int(request.session.get('redeem_points', 0))
-            pts_allowed = min(pts_requested, profile.reward_points)
+            pts_allowed = min(pts_requested, user_available_pts)
             if pts_allowed > 0:
                 discount_amount = pts_allowed * setting.points_value_in_fcfa
                 if discount_amount > grand_total:
                     discount_amount = int(grand_total)
                 redeemed_points = pts_allowed
-                # Deduct points immediately
-                profile.reward_points -= redeemed_points
-                profile.save()
+                # Deduct points immediately from branch reward balance
+                if branch and hasattr(request.user, 'deduct_branch_points'):
+                    request.user.deduct_branch_points(branch, redeemed_points)
+                if hasattr(request.user, 'profile') and request.user.profile.reward_points >= redeemed_points:
+                    request.user.profile.reward_points -= redeemed_points
+                    request.user.profile.save()
 
         total_price = int(grand_total) - discount_amount
 
+        # Automatic payment method when user redeems points (only visible to admin)
+        selected_payment = request.POST.get('payment_method', 'cod')
+        if redeemed_points > 0:
+            final_payment_method = 'points_redeemed'
+            is_order_paid = (total_price <= 0)
+        else:
+            final_payment_method = selected_payment
+            is_order_paid = False
+
         order = Order.objects.create(
             user=request.user if request.user.is_authenticated else None,
+            branch=branch,
+            branch_name=branch_name,
             full_name=request.POST.get('full_name'),
             email=request.POST.get('email'),
             phone_number=request.POST.get('phone_number'),
@@ -179,8 +250,9 @@ class CheckoutView(View):
             packaging_fee=cart.get_packaging_fee(),
             total_price=total_price,
             discount_amount=discount_amount,
-            # coupon field left null — coupons commented out for now
-            payment_method=request.POST.get('payment_method', 'cod')
+            points_redeemed=redeemed_points,
+            payment_method=final_payment_method,
+            is_paid=is_order_paid,
         )
 
         order_items_list = []
@@ -202,10 +274,12 @@ class CheckoutView(View):
 
         try:
             from django.core.mail import send_mail
-            subject = f"New Order #{order.id} from {order.full_name}"
+            subject = f"New Order #{order.id} from {order.full_name} [{branch_name}]"
             message = (
                 f"A new order has been placed.\n\n"
-                f"Order ID: {order.id}\nCustomer: {order.full_name}\n"
+                f"Order ID: {order.id}\n"
+                f"Branch: {branch_name}\n"
+                f"Customer: {order.full_name}\n"
                 f"Email: {order.email}\nPhone: {order.phone_number}\n"
                 f"Address: {order.address}\nTotal: {order.total_price} FCFA\n"
                 f"Discount: {order.discount_amount} FCFA\n"
@@ -223,18 +297,22 @@ class CheckoutView(View):
             pass
 
         import urllib.parse
+        points_info = f"💎 *Points Redeemed:* {order.points_redeemed} pts (Saved {order.discount_amount} FCFA with Reward Points!)\n" if (order.points_redeemed and order.points_redeemed > 0) else ""
         whatsapp_message = (
             f"Hello Cake Princess! 👑\n\n"
             f"I have just placed an order on your website.\n"
             f"🛍️ *Order ID:* #{order.id}\n"
+            f"📍 *Branch:* {branch_name}\n"
             f"📦 *Items:*\n{order_items_text}\n"
             f"👤 *Name:* {order.full_name}\n"
             f"📍 *Address:* {order.address}\n"
-            f"💰 *Total:* {order.total_price} FCFA\n\n"
+            f"{points_info}"
+            f"💰 *Total To Pay:* {order.total_price} FCFA\n\n"
             f"Please confirm my order."
         )
+        admin_phone = "237621643169"
         encoded_message = urllib.parse.quote(whatsapp_message)
-        whatsapp_url = f"https://wa.me/237621643169?text={encoded_message}"
+        whatsapp_url = f"https://wa.me/{admin_phone}?text={encoded_message}"
 
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             from django.http import JsonResponse

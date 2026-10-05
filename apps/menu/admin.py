@@ -5,6 +5,7 @@ from .models import Category, Meal, Review, MealImage, MadeOnCommandItem, MadeOn
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
     prepopulated_fields = {'slug': ('name',)}
+    filter_horizontal = ['branches']
 
 class MealImageInline(admin.TabularInline):
     model = MealImage
@@ -13,16 +14,17 @@ class MealImageInline(admin.TabularInline):
 @admin.register(Meal)
 class MealAdmin(admin.ModelAdmin):
     list_display = ['name', 'category', 'price', 'available_days', 'is_available', 'is_daily_special', 'created_at']
-    list_filter = ['is_available', 'is_daily_special', 'category', 'created_at']
+    list_filter = ['is_available', 'is_daily_special', 'category', 'branches', 'created_at']
     list_editable = ['price', 'available_days', 'is_available', 'is_daily_special']
     prepopulated_fields = {'slug': ('name',)}
+    filter_horizontal = ['branches']
     search_fields = ['name', 'description']
     inlines = [MealImageInline]
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ['meal', 'user', 'rating', 'is_approved', 'created_at']
-    list_filter = ['is_approved', 'rating', 'created_at']
+    list_display = ['meal', 'branch', 'user', 'rating', 'is_approved', 'created_at']
+    list_filter = ['branch', 'is_approved', 'rating', 'created_at']
     list_editable = ['is_approved']
     actions = ['approve_reviews']
 

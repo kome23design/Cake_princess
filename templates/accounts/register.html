@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %}Register | Cake Princess{% endblock %}
@@ -6,9 +7,12 @@
 {% block content %}
 <section class="py-24 bg-cream min-h-screen flex items-center">
     <div class="max-w-lg mx-auto w-full px-4">
-        <div class="glass p-10 rounded-[2.5rem] shadow-2xl" data-aos="fade-up">
-            <div class="text-center mb-10">
-                <h1 class="font-serif text-3xl font-bold">Join the <span class="text-gold-600">Royalty</span></h1>
+        <div class="glass p-10 rounded-[2.5rem] shadow-2xl border border-gold-200/60" data-aos="fade-up">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center p-2 mb-4 rounded-2xl bg-black/90 border border-gold-400/40 shadow-md">
+                    <img src="{% static 'images/logo.png' %}" alt="Cake Princess Logo" class="h-16 w-auto object-contain">
+                </div>
+                <h1 class="font-serif text-3xl font-bold text-charcoal">Join the <span class="text-gold-600">Royalty</span></h1>
                 <p class="text-gray-500 text-sm mt-2">Create an account for faster ordering and history tracking.</p>
             </div>
 

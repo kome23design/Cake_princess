@@ -67,6 +67,9 @@
                 {% csrf_token %}
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {# Branch selection #}
+                    <div class="reservation-field md:col-span-2">{{ form.branch|as_crispy_field }}</div>
+
                     {# Regular text fields rendered by crispy - no picker overlap issues #}
                     <div class="reservation-field">{{ form.full_name|as_crispy_field }}</div>
                     <div class="reservation-field">{{ form.email|as_crispy_field }}</div>
@@ -187,6 +190,8 @@ document.getElementById('reservationForm').addEventListener('submit', async func
     btn.disabled = true;
     btn.innerHTML = '<span style="opacity:0.7">Saving reservation…</span>';
 
+    const branchEl = form.querySelector('[name="branch"]');
+    const branchName = branchEl?.options[branchEl?.selectedIndex]?.text || '';
     const fullName = form.querySelector('[name="full_name"]')?.value || '';
     const email    = form.querySelector('[name="email"]')?.value || '';
     const phone    = form.querySelector('[name="phone_number"]')?.value || '';
@@ -203,6 +208,7 @@ document.getElementById('reservationForm').addEventListener('submit', async func
     } catch(err) {}
 
     let message = `👑 *New Reservation — Cake Princess*\n\n`;
+    if (branchName && !branchName.includes('--')) message += `📍 *Branch:* ${branchName}\n`;
     message += `*Name:* ${fullName}\n`;
     message += `*Email:* ${email}\n`;
     message += `*Phone:* ${phone}\n`;

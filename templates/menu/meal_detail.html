@@ -55,11 +55,16 @@
 
                 <h1 class="font-serif text-5xl font-bold text-charcoal mb-4">{{ meal.name }}</h1>
                 <div class="flex items-center space-x-4 mb-8">
+                    {% if meal.category.slug == 'event-packages' %}
+                    <span class="text-3xl font-bold text-burgundy">Made on Command</span>
+                    <span class="px-3 py-1 bg-burgundy/10 text-burgundy text-xs font-bold rounded-full uppercase border border-burgundy/20">Custom Inquiry Only</span>
+                    {% else %}
                     <span class="text-3xl font-bold text-gold-700">{{ meal.price }} FCFA</span>
                     {% if meal.is_available_today %}
                     <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase">Available Today</span>
                     {% else %}
                     <span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full uppercase">Available on {{ meal.get_next_available_day|default:"some days" }}</span>
+                    {% endif %}
                     {% endif %}
                 </div>
 
@@ -67,7 +72,52 @@
                     <p>{{ meal.description }}</p>
                 </div>
 
-                {% if meal.is_available_today %}
+                {% if meal.category.slug == 'event-packages' %}
+                <div class="space-y-6 bg-cream/70 p-6 sm:p-8 rounded-3xl border border-gold-200">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-burgundy/10 text-burgundy text-xs font-bold uppercase tracking-wider mb-2">
+                            <span>👑 Bespoke Event Package</span>
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-charcoal">Request Package Quotation</h3>
+                        <p class="text-gray-500 text-xs mt-1">Fill in your event details below. Submitting will immediately open WhatsApp to connect directly with the admin manager.</p>
+                    </div>
+
+                    <form method="post" action="{% url 'menu:meal_detail' meal.slug %}" class="space-y-4">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="inquiry_name" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Your Name *</label>
+                                <input type="text" id="inquiry_name" name="name" required placeholder="e.g. Jean Dupont" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-burgundy focus:outline-none text-sm bg-white font-medium text-charcoal">
+                            </div>
+                            <div>
+                                <label for="inquiry_phone" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Phone Number *</label>
+                                <input type="tel" id="inquiry_phone" name="phone" required placeholder="e.g. 670 899 104" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-burgundy focus:outline-none text-sm bg-white font-medium text-charcoal">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="inquiry_email" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email Address</label>
+                                <input type="email" id="inquiry_email" name="email" placeholder="your@email.com" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-burgundy focus:outline-none text-sm bg-white font-medium text-charcoal">
+                            </div>
+                            <div>
+                                <label for="inquiry_event_date" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Event Date</label>
+                                <input type="date" id="inquiry_event_date" name="event_date" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-burgundy focus:outline-none text-sm bg-white font-medium text-charcoal cursor-pointer">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="inquiry_message" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Guest Count & Special Requests *</label>
+                            <textarea id="inquiry_message" name="message" required rows="3" placeholder="Tell us about your event theme, number of guests, dessert choices..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-burgundy focus:outline-none text-sm bg-white font-medium text-charcoal"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full flex items-center justify-center space-x-2 btn-burgundy text-gold-100 py-3.5 rounded-full font-bold shadow-lg hover:opacity-95 transition-all text-sm uppercase tracking-wider">
+                            <span>Send Inquiry to Admin on WhatsApp</span>
+                            <svg class="w-5 h-5 text-gold-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.768.804 2.802.804 3.182 0 5.768-2.587 5.769-5.766.001-3.186-2.575-5.79-5.775-5.79zm3.376 8.214c-.149.421-.734.782-1.026.832-.279.048-.646.082-2.146-.539-1.802-.746-2.955-2.587-3.045-2.707-.09-.12-0.73-0.971-.73-1.852 0-.881.46-1.314.624-1.493.164-.179.359-.224.479-.224.12 0 .239.001.344.006.11.005.257-.042.402.308.149.359.508 1.239.553 1.329.045.09.075.194.015.314-.06.12-.09.194-.179.299-.09.105-.194.234-.277.314-.092.088-.188.184-.081.368.107.184.475.784 1.02 1.27.701.624 1.29.818 1.474.908.184.09.292.079.401-.045.11-.125.469-.548.594-.736.125-.188.25-.157.421-.093.171.064 1.085.511 1.272.604.188.093.313.14.359.219.046.079.046.459-.103.88z"/></svg>
+                        </button>
+                    </form>
+                </div>
+                {% elif meal.is_available_today %}
                 <form action="{% url 'orders:cart_add' meal.id %}" method="post" class="space-y-6">
                     {% csrf_token %}
                     <div class="flex items-center space-x-4">
@@ -76,7 +126,7 @@
                             <input type="number" name="quantity" id="quantity" value="1" min="1" class="w-12 text-center border-none focus:ring-0 font-bold text-charcoal">
                             <button type="button" onclick="increment()" class="text-gray-500 hover:text-gold-600 font-bold px-2">+</button>
                         </div>
-                        <button type="submit" class="flex-1 btn-premium text-white py-4 rounded-full font-bold shadow-lg">
+                        <button type="submit" class="flex-1 btn-gold text-charcoal py-4 rounded-full font-bold shadow-lg hover:opacity-90 transition-all">
                             Add to Cart
                         </button>
                     </div>
