@@ -19,6 +19,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ['id', 'full_name', 'branch', 'phone_number', 'status', 'payment_method_badge', 'total_price', 'points_redeemed', 'discount_amount', 'is_paid', 'points_awarded', 'whatsapp_notification']
     list_filter = ['branch', 'status', 'is_paid', 'points_awarded', 'payment_method', 'created_at']
     list_editable = ['status', 'is_paid']
+    date_hierarchy = 'created_at'
     inlines = [OrderItemInline]
     search_fields = ['full_name', 'email', 'phone_number', 'branch_name']
     exclude = ['coupon']
@@ -108,6 +109,7 @@ class OrderAdmin(admin.ModelAdmin):
 class DailyPaidOrderAdmin(admin.ModelAdmin):
     list_display = ['id', 'full_name', 'branch', 'meals_list', 'total_price', 'points_awarded', 'points_redeemed', 'discount_amount', 'created_at']
     list_filter = ['branch', 'created_at']
+    date_hierarchy = 'created_at'
     search_fields = ['full_name', 'email', 'phone_number', 'branch_name']
     
     def get_queryset(self, request):
