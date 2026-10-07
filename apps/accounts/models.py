@@ -110,6 +110,7 @@ class Profile(models.Model):
         return False
 
 
+
 class UserBranchReward(models.Model):
     """Tracks reward points for a specific user within a specific branch."""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='branch_rewards')
@@ -139,3 +140,15 @@ class UserBranchReward(models.Model):
                 self.save(update_fields=['points', 'points_earned_at'])
                 return True
         return False
+
+
+
+class PushSubscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='push_subscriptions')
+    endpoint = models.URLField(max_length=500, unique=True)
+    p256dh = models.CharField(max_length=200)
+    auth = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.endpoint[:30]}..."

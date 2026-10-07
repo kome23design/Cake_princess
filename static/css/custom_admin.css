@@ -1,1 +1,13 @@
 /* Default admin styles - custom palette removed */
+
+/* Fix login logo size */
+.login-logo img {
+    max-width: 150px !important;
+    max-height: 150px !important;
+    height: auto !important;
+    width: auto !important;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+}

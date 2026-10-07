@@ -118,3 +118,16 @@ class MadeOnCommandInquiry(models.Model):
 
     def __str__(self):
         return f"Inquiry from {self.name} for {self.item.title}"
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new:
+            try:
+                from accounts.utils import send_web_push
+                admin_url = f"/admin/menu/madeoncommandinquiry/{self.pk}/change/"
+                title = "New Event Package Inquiry! 🎉"
+                body = f"{self.name} inquired about {self.item.title}"
+                send_web_push(title, body, admin_url)
+            except Exception as e:
+                print(f"Push error: {e}")

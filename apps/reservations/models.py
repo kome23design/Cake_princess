@@ -7,6 +7,7 @@ class Reservation(models.Model):
         ('birthday', 'Birthday Surprise'),
         ('engagement', 'Engagement Surprise'),
         ('event', 'General Event'),
+        ('other', 'Other Reservation'),
     )
     
     STATUS_CHOICES = (

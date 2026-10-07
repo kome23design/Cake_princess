@@ -11,5 +11,7 @@ urlpatterns = [
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile/edit/', views.EditProfileView.as_view(), name='edit_profile'),
     path('profile/change-password/', views.ChangePasswordView.as_view(), name='change_password'),
+    path('push/save/', views.save_push_subscription, name='save_push_subscription'),
+    path('push/vapid-public-key/', views.vapid_public_key, name='vapid_public_key'),
 ]
 

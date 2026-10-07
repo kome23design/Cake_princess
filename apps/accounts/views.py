@@ -131,3 +131,42 @@ class ChangePasswordView(LoginRequiredMixin, View):
             messages.success(request, 'Password changed successfully!')
             return redirect('accounts:profile')
         return render(request, 'accounts/change_password.html', {'form': form})
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+from .models import PushSubscription
+
+@csrf_exempt
+def save_push_subscription(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            endpoint = data.get('endpoint')
+            keys = data.get('keys', {})
+            p256dh = keys.get('p256dh')
+            auth = keys.get('auth')
+
+            if not endpoint or not p256dh or not auth:
+                return JsonResponse({'status': 'error', 'message': 'Invalid subscription data'}, status=400)
+
+            user = request.user if request.user.is_authenticated else None
+            if not user or not user.is_staff:
+                return JsonResponse({'status': 'error', 'message': 'Unauthorized. Admin only.'}, status=403)
+
+            sub, created = PushSubscription.objects.update_or_create(
+                endpoint=endpoint,
+                defaults={
+                    'user': user,
+                    'p256dh': p256dh,
+                    'auth': auth,
+                }
+            )
+            return JsonResponse({'status': 'success', 'message': 'Subscription saved'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+def vapid_public_key(request):
+    from django.conf import settings
+    return JsonResponse({'public_key': getattr(settings, 'VAPID_PUBLIC_KEY', '')})

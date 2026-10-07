@@ -97,7 +97,20 @@ class Order(models.Model):
         return self.total_price + self.delivery_charge + self.packaging_fee - self.discount_amount
 
     def save(self, *args, **kwargs):
+        is_new = self.pk is None
         super().save(*args, **kwargs)
+        
+        if is_new:
+            try:
+                from accounts.utils import send_web_push
+                from django.urls import reverse
+                admin_url = f"/admin/orders/order/{self.pk}/change/"
+                title = "New Order Received! 🍰"
+                body = f"Order #{self.pk} from {self.full_name} ({self.total_price} FCFA)"
+                send_web_push(title, body, admin_url)
+            except Exception as e:
+                print(f"Push notification error: {e}")
+                
         if self.user and not self.points_awarded:
             if self.status == 'delivered' or self.is_paid:
                 try:
