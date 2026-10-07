@@ -201,7 +201,7 @@ JAZZMIN_SETTINGS = {
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
     "related_modal_active": True,
-    "custom_css": None,
+    "custom_css": "css/custom_admin.css",
     "custom_js": "js/push_notifications.js",
     "use_google_fonts_cdn": True,
     "show_ui_builder": False,

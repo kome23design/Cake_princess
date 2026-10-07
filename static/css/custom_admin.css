@@ -1,13 +1,28 @@
 /* Default admin styles - custom palette removed */
 
-/* Fix login logo size */
-.login-logo img {
-    max-width: 150px !important;
-    max-height: 150px !important;
-    height: auto !important;
-    width: auto !important;
-    border-radius: 50%;
-    object-fit: cover;
-    margin: 0 auto;
-    display: block;
+/* Fix login logo size and container */
+.login-box {
+    margin-top: 2rem !important;
+    width: 380px !important;
+}
+
+.login-logo {
+    margin-bottom: 1.5rem !important;
+    text-align: center !important;
+}
+
+.login-logo img,
+.login-box .login-logo img,
+.login-logo img.logo-light,
+.login-logo img.logo-dark {
+    max-width: 140px !important;
+    max-height: 140px !important;
+    width: 140px !important;
+    height: 140px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    margin: 0 auto !important;
+    display: inline-block !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    background-color: #000 !important;
 }
