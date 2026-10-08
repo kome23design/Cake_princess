@@ -69,7 +69,13 @@
                             {% endif %}
                         </div>
                         <p class="text-xs text-gray-400">{{ b.address }}</p>
-                        <p class="text-xs text-gold-400 mt-0.5">{{ b.phone }}</p>
+                        <div class="flex items-center justify-between mt-1 text-xs">
+                            <span class="text-gold-400">{{ b.phone }}</span>
+                            <a href="{{ b.directions_url }}" target="_blank" rel="noopener noreferrer" class="text-[11px] text-gold-300 hover:text-white underline font-semibold flex items-center space-x-1">
+                                <span>🗺️ Follow on Map</span>
+                                <span class="text-[9px]">↗</span>
+                            </a>
+                        </div>
                     </div>
                     {% endfor %}
 

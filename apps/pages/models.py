@@ -57,6 +57,12 @@ class Branch(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def directions_url(self):
+        import urllib.parse
+        target = self.address or f"{self.name}, Yaounde, Cameroon"
+        return f"https://www.google.com/maps/dir/?api=1&destination={urllib.parse.quote(target)}"
+
     def save(self, *args, **kwargs):
         if self.is_default:
             Branch.objects.filter(is_default=True).exclude(pk=self.pk).update(is_default=False)
