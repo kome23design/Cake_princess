@@ -1,27 +1,19 @@
-{% extends "admin/base_site.html" %}
+{% extends "admin/change_list.html" %}
 {% load i18n static %}
 
-{% block breadcrumbs %}
-<div class="breadcrumbs">
-    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
-    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
-    &rsaquo; {{ opts.verbose_name_plural|capfirst }}
-</div>
-{% endblock %}
-
-{% block content %}
-<div class="card card-outline card-primary shadow-sm mb-4" style="border-top: 4px solid #417690; background: #fff; border-radius: 12px; padding: 25px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
-        <div style="display: flex; align-items: center; gap: 12px;">
+{% block result_list %}
+<div class="card card-outline card-primary shadow-sm mb-4" style="border-top: 4px solid #417690; background: #ffffff; border-radius: 12px; padding: 22px; margin-bottom: 25px;">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <div class="d-flex align-items-center" style="gap: 12px;">
             <div style="width: 44px; height: 44px; border-radius: 50%; background: #e8f3f8; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                 🍰
             </div>
             <div>
-                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #1e293b;">
+                <h4 style="margin: 0; font-size: 1.2rem; font-weight: 700; color: #1e293b;">
                     Branch Management for Meals
-                </h3>
-                <p style="margin: 3px 0 0; color: #64748b; font-size: 0.875rem;">
-                    Select which branch you are managing meals for, or view all branches combined.
+                </h4>
+                <p style="margin: 2px 0 0; color: #64748b; font-size: 0.85rem;">
+                    Filter and manage meals for a specific branch, or view all branches together.
                 </p>
             </div>
         </div>
@@ -29,7 +21,7 @@
         <div>
             {% if active_branch %}
                 <span class="badge" style="background: #417690; color: #fff; font-size: 0.85rem; padding: 8px 14px; border-radius: 20px; font-weight: 600;">
-                    📍 Managing: {{ active_branch.name }} Branch
+                    📍 Viewing: {{ active_branch.name }} Branch
                 </span>
             {% else %}
                 <span class="badge" style="background: #64748b; color: #fff; font-size: 0.85rem; padding: 8px 14px; border-radius: 20px; font-weight: 600;">
@@ -39,38 +31,39 @@
         </div>
     </div>
 
-    <!-- Branch Selector Cards -->
+    <!-- Branch Selector Clickable Cards -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 10px;">
-        <!-- All Branches option -->
-        <a href="?branch=" style="text-decoration: none; color: inherit;">
+        <!-- Option: All Branches -->
+        <a href="./" style="text-decoration: none; color: inherit; display: block;">
             <div style="border: 2px solid {% if not active_branch %}#417690{% else %}#e2e8f0{% endif %}; background: {% if not active_branch %}#f0f7fa{% else %}#f8fafc{% endif %}; border-radius: 10px; padding: 14px 18px; transition: all 0.2s ease; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
                 <div>
                     <div style="font-weight: 700; font-size: 0.95rem; color: {% if not active_branch %}#204b60{% else %}#334155{% endif %};">
                         🌐 All Branches
                     </div>
-                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
-                        Manage & view every meal across all branches
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 3px;">
+                        Manage & view meals across all locations
                     </div>
                 </div>
                 {% if not active_branch %}
-                    <span style="color: #417690; font-weight: bold; font-size: 1.1rem;">✓</span>
+                    <span style="color: #417690; font-weight: bold; font-size: 1.2rem;">✓</span>
                 {% endif %}
             </div>
         </a>
 
+        <!-- Option: Specific Branch Cards -->
         {% for b in branch_list %}
-        <a href="?branch={{ b.id }}" style="text-decoration: none; color: inherit;">
+        <a href="?branches__id__exact={{ b.id }}" style="text-decoration: none; color: inherit; display: block;">
             <div style="border: 2px solid {% if active_branch and active_branch.id == b.id %}#417690{% else %}#e2e8f0{% endif %}; background: {% if active_branch and active_branch.id == b.id %}#f0f7fa{% else %}#ffffff{% endif %}; border-radius: 10px; padding: 14px 18px; transition: all 0.2s ease; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
                 <div>
                     <div style="font-weight: 700; font-size: 0.95rem; color: {% if active_branch and active_branch.id == b.id %}#204b60{% else %}#334155{% endif %};">
                         📍 {{ b.name }} Branch
                     </div>
-                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 3px;">
                         {{ b.address|truncatechars:35 }}
                     </div>
                 </div>
                 {% if active_branch and active_branch.id == b.id %}
-                    <span style="color: #417690; font-weight: bold; font-size: 1.1rem;">✓</span>
+                    <span style="color: #417690; font-weight: bold; font-size: 1.2rem;">✓</span>
                 {% endif %}
             </div>
         </a>
@@ -78,11 +71,11 @@
     </div>
 
     {% if active_branch %}
-    <div style="margin-top: 15px; padding-top: 12px; border-top: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; color: #475569;">
+    <div style="margin-top: 15px; padding-top: 12px; border-top: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.85rem; color: #475569;">
         <span>
-            💡 <strong>Quick tip:</strong> When you add a new meal right now, it will automatically be attached to <strong>{{ active_branch.name }} Branch</strong>.
+            💡 <strong>Active Scope:</strong> Any new meal added will automatically be tagged to <strong>{{ active_branch.name }} Branch</strong>.
         </span>
-        <a href="add/?branch={{ active_branch.id }}" class="btn btn-sm" style="background: #417690; color: #fff; font-weight: 600; padding: 5px 14px; border-radius: 6px; text-decoration: none;">
+        <a href="add/?branches__id__exact={{ active_branch.id }}&branch={{ active_branch.id }}" class="btn btn-sm" style="background: #417690; color: #ffffff; font-weight: 600; padding: 6px 16px; border-radius: 6px; text-decoration: none;">
             + Add New Meal to {{ active_branch.name }}
         </a>
     </div>

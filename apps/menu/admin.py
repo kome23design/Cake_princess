@@ -30,7 +30,7 @@ class MealAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        branch_id = request.GET.get('branch')
+        branch_id = request.GET.get('branches__id__exact') or request.GET.get('branch')
         if branch_id:
             try:
                 qs = qs.filter(branches__id=int(branch_id))
@@ -41,7 +41,7 @@ class MealAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         from pages.models import Branch
         extra_context = extra_context or {}
-        branch_id = request.GET.get('branch')
+        branch_id = request.GET.get('branches__id__exact') or request.GET.get('branch')
         active_branch = None
         if branch_id:
             try:
@@ -55,7 +55,7 @@ class MealAdmin(admin.ModelAdmin):
 
     def get_changeform_initial_data(self, request):
         initial = super().get_changeform_initial_data(request)
-        branch_id = request.GET.get('branch')
+        branch_id = request.GET.get('branches__id__exact') or request.GET.get('branch')
         if branch_id:
             try:
                 initial['branches'] = [int(branch_id)]
